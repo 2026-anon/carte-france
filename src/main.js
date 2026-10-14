@@ -3,6 +3,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
 import { localeFr } from './locale-fr.js';
 import { ajouterDepartements } from './departements.js';
+import { ajouterNitrates } from './nitrates.js';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 
 // Depuis MapLibre 6, le worker est un fichier à part que Vite n'embarque pas tout seul.
@@ -29,4 +30,7 @@ const carte = new maplibregl.Map({
 carte.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
 carte.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-left');
 
-carte.on('load', () => ajouterDepartements(carte));
+carte.on('load', async () => {
+  ajouterDepartements(carte);
+  await ajouterNitrates(carte);
+});

@@ -6,6 +6,9 @@ Carte interactive de la France métropolitaine, entièrement côté navigateur (
 La carte affiche les contours des départements sur un fond sobre et gratuit,
 [OpenFreeMap](https://openfreemap.org) (style « positron »), sans clé API.
 
+La carte affiche aussi les nitrates dans les eaux souterraines (stations ADES / Hub'Eau, 5 classes autour du seuil de 50 mg/L) ;
+un clic sur une station ouvre sa fiche (voir `CLAUDE.md` pour mettre les données à jour).
+
 Un clic (ou un appui sur téléphone) sur un département ouvre une fenêtre avec son nom et son code INSEE.
 Le département reste surligné jusqu'à un clic ailleurs ou sur la croix de la fenêtre.
 Sur ordinateur, le département sous le curseur est aussi surligné.
