@@ -37,6 +37,7 @@ Il n'y a pas encore de tests ni de linter.
 - `src/style.css` : styles de la page
 - `data/` : données géographiques (`departements.geojson`, 96 départements métropolitains, propriétés `code` et `nom`)
 - `scripts/fetch_nitrates.py` : mise à jour de `data/nitrates_stations.csv` depuis Hub'Eau
+- `scripts/fetch_nitrates_cours_eau.py` : mise à jour de `data/nitrates_cours_eau.csv` depuis Hub'Eau
 - `public/` : fichiers servis tels quels (favicon)
 
 ## Conventions
@@ -83,6 +84,10 @@ Il n'y a pas encore de tests ni de linter.
   Une ligne par station : la dernière analyse parmi celles des 5 dernières années. Colonnes : `code_station` (texte, `bss_id`),
   `nom` (ancien code BSS : l'API ne fournit pas de nom de station), `lat`, `lon` (WGS84, 4 décimales), `commune`,
   `code_dept` (texte), `date_analyse` (AAAA-MM-JJ), `valeur`, `unite` (telle que renvoyée : `mg(NO3)/L`).
+- `data/nitrates_cours_eau.csv` : nitrates dans les eaux de surface (cours d'eau et plans d'eau), API Hub'Eau « Qualité des cours d'eau » v2
+  (`/api/v2/qualite_rivieres/analyse_pc` et `station_pc`, paramètre SANDRE 1340), données Naïades, Licence ouverte Etalab 2.0.
+  Mêmes colonnes et mêmes règles que `nitrates_stations.csv` (une ligne par station, dernière analyse sur 5 ans), mais `nom` est ici le
+  libellé de la station (`libelle_station`) et `code_station` le code Naïades (8 caractères, texte). **Pas encore affichée sur la carte.**
 - `data/layers.csv` : catalogue des couches (`id,nom,fichier,type,cle_jointure,colonne_valeur,filtres,palette,unite,source`).
   Documentation seulement : le code ne le lit pas encore, les réglages de la couche sont dans `src/nitrates.js`.
   La colonne `palette` renvoie à `CLASSES` : ne pas y recopier les couleurs.
@@ -93,6 +98,27 @@ Il n'y a pas encore de tests ni de linter.
 l'API est lente). Il réécrit `data/nitrates_stations.csv` et affiche le nombre de stations, celles ignorées et les unités.
 Limites de l'API respectées : page de 5000 au plus (max 20000) et profondeur `page × taille` ≤ 20000, d'où le découpage par
 département (et par période au-delà de 20000 analyses). La fenêtre est `aujourd'hui − 5 ans`.
+
+### Mettre à jour les nitrates des eaux de surface
+
+`python3 scripts/fetch_nitrates_cours_eau.py` (Python 3 standard, aucune dépendance ; compter plusieurs dizaines de minutes : l'API est lente).
+Il réécrit `data/nitrates_cours_eau.csv` et affiche en fin d'exécution les analyses lues, les doublons, le nombre de stations écrites et ignorées
+(avec le motif), les unités rencontrées et les stations concernées.
+
+- **API v2 uniquement** (`/api/v2/qualite_rivieres`) : la v1 est fermée. Stations via `station_pc`, analyses via `analyse_pc`, rattachées par
+  `code_station`. `analyse_pc` ne donne ni nom, ni commune, ni département : ils viennent de `station_pc`, ainsi que `lat` et `lon`.
+- Noms de champs réels (vérifiés par une requête d'une ligne, pas devinés) : `code_parametre` (filtre, `1340`), `code_departement`,
+  `date_debut_prelevement` / `date_fin_prelevement` (filtres), `date_prelevement` et `heure_prelevement` (résultat), `resultat`,
+  `symbole_unite`, `code_support`, `code_analyse`. Côté stations : `libelle_station`, `libelle_commune`, `code_departement`, `latitude`, `longitude`.
+- Limites : page de 5000 au plus (max 20000), profondeur `page × taille` ≤ 20000 : une requête par département (Corse `2A`/`2B` comprise,
+  Paris `75` aussi), coupée en deux périodes tant qu'elle dépasse 20000 résultats. Fenêtre : `aujourd'hui − 5 ans`.
+- **Doublons** : une même analyse peut apparaître plusieurs fois (même `code_analyse`) : elle n'est comptée qu'une fois. Deux analyses de même
+  station, date et heure (fractions différentes) : on garde le `code_analyse` le plus grand ; le script compte les cas où les valeurs diffèrent.
+- Seul le support « Eau » (`code_support` = `3`) est retenu ; les autres sont comptés et ignorés.
+- **Unité** : une seule attendue, `mg(NO3)/L`. Une station dont la dernière analyse est en `mg/L` (ou autre) n'est **pas écrite** et n'est pas convertie :
+  le script la liste. Ne rien convertir sans décision explicite (le facteur dépend de l'espèce chimique exprimée : NO3 ou N).
+- Comme pour les eaux souterraines, une station dont la dernière analyse n'a pas de valeur ou de coordonnées est ignorée, sans retomber sur une plus ancienne.
+- Classes d'affichage : celles de `CLASSES` dans `src/nitrates.js`, à ne pas recopier.
 
 ### Conventions de la couche nitrates
 
