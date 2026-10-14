@@ -1,3 +1,8 @@
+/* Thème clair uniquement (voir aussi la balise meta color-scheme de index.html). */
+:root {
+  color-scheme: only light;
+}
+
 html,
 body {
   margin: 0;
@@ -133,31 +138,46 @@ body {
   }
 }
 
-/* Légende de la couche nitrates, au-dessus de l'échelle (bas gauche). */
-.legende {
+/* Panneau en bas à gauche : filtres puis légende, empilés (ils ne peuvent donc pas se recouvrir).
+   --bas-panneau est la hauteur des crédits, mesurée dans src/main.js : le panneau reste au-dessus.
+   Il garde de la place en haut (titre et, sur petit écran, fenêtre d'information) et défile s'il est trop grand. */
+.panneau {
+  --bas: max(40px, var(--bas-panneau, 40px));
   position: absolute;
-  left: 12px;
-  bottom: 40px;
-  max-width: 230px;
+  left: 6px;
+  bottom: var(--bas);
+  box-sizing: border-box;
+  width: min(262px, calc(100% - 12px));
+  max-height: calc(100% - var(--bas) - 90px);
+  padding: 6px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Fond opaque : ni les étiquettes du fond de carte ni les points ne doivent transparaître. */
+.bloc {
+  flex: none;
   padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.94);
+  background: #fff;
   border-radius: 6px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
   font-size: 0.8rem;
   color: #222;
 }
 
-.legende[hidden] {
+.bloc[hidden] {
   display: none;
 }
 
-.legende-titre {
+.bloc-titre {
   margin: 0;
   font-weight: 600;
   cursor: pointer;
 }
 
-.legende[open] .legende-titre {
+.bloc[open] .bloc-titre {
   margin-bottom: 6px;
 }
 
@@ -187,12 +207,102 @@ body {
   color: #555;
 }
 
-/* Petit écran : les crédits occupent plusieurs lignes en bas ; la légende se place au-dessus d'eux. */
+/* Filtres de la couche nitrates. */
+.filtres-classes {
+  margin: 0 0 4px;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.filtres-intitule {
+  padding: 0;
+  margin-bottom: 2px;
+  font-weight: 600;
+}
+
+.filtres-ligne {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  cursor: pointer;
+}
+
+.filtres-ligne input {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #1d4e89;
+}
+
+.filtres-etiquette {
+  display: block;
+  font-weight: 600;
+}
+
+.filtres-annee-valeur {
+  font-weight: 700;
+}
+
+.filtres-annee input[type='range'] {
+  display: block;
+  width: 100%;
+  margin: 6px 0 0;
+  accent-color: #1d4e89;
+}
+
+.filtres-bornes {
+  display: flex;
+  justify-content: space-between;
+  color: #555;
+}
+
+.filtres-compteur {
+  margin: 4px 0 6px;
+  font-weight: 600;
+}
+
+.filtres-reinit {
+  width: 100%;
+  padding: 6px 10px;
+  font: inherit;
+  color: #1d4e89;
+  background: #fff;
+  border: 1px solid #1d4e89;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Écran tactile : des zones d'appui d'au moins 40 px de haut. */
+@media (pointer: coarse) {
+  .bloc-titre {
+    padding: 6px 0;
+    margin-bottom: 0;
+  }
+
+  .filtres-ligne {
+    min-height: 40px;
+  }
+
+  .filtres-ligne input {
+    width: 22px;
+    height: 22px;
+  }
+
+  .filtres-annee input[type='range'] {
+    height: 32px;
+  }
+
+  .filtres-reinit {
+    min-height: 40px;
+  }
+}
+
+/* Petit écran : la fenêtre d'information occupe le haut de l'écran, le panneau lui laisse de la place. */
 @media (max-width: 560px) {
-  .legende {
-    bottom: 96px;
-    max-width: 210px;
-    padding: 6px 10px;
-    font-size: 0.75rem;
+  .panneau {
+    max-height: calc(100% - var(--bas) - 236px);
   }
 }

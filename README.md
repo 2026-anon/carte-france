@@ -8,6 +8,8 @@ La carte affiche les contours des départements sur un fond sobre et gratuit,
 
 La carte affiche aussi les nitrates dans les eaux souterraines (stations ADES / Hub'Eau, 5 classes autour du seuil de 50 mg/L) ;
 un clic sur une station ouvre sa fiche (voir `CLAUDE.md` pour mettre les données à jour).
+Un bloc « Filtres » (replié par défaut sur petit écran) permet de masquer des classes et de ne garder que les stations analysées
+depuis une année donnée, avec le nombre de stations affichées ; la légende est repliable.
 
 Un clic (ou un appui sur téléphone) sur un département ouvre une fenêtre avec son nom et son code INSEE.
 Le département reste surligné jusqu'à un clic ailleurs ou sur la croix de la fenêtre.

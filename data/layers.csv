@@ -1,2 +1,2 @@
 id,nom,fichier,type,cle_jointure,colonne_valeur,filtres,palette,unite,source
-nitrates_eaux_souterraines,Nitrates dans les eaux souterraines,data/nitrates_stations.csv,points,code_station,valeur,,#4575b4|#91bfdb|#fee090|#fc8d59|#d73027,mg(NO3)/L,"ADES / Hub'Eau - API Qualité des nappes d'eau souterraine (https://hubeau.eaufrance.fr/page/api-qualite-nappes), Licence ouverte Etalab 2.0"
+nitrates_eaux_souterraines,Nitrates dans les eaux souterraines,data/nitrates_stations.csv,points,code_station,valeur,,voir CLASSES dans src/nitrates.js,mg(NO3)/L,"ADES / Hub'Eau - API Qualité des nappes d'eau souterraine (https://hubeau.eaufrance.fr/page/api-qualite-nappes), Licence ouverte Etalab 2.0"

@@ -4,15 +4,27 @@ import nitratesUrl from '../data/nitrates_stations.csv?url';
 const SOURCE = 'nitrates';
 export const COUCHE_NITRATES = 'nitrates-points';
 
+// Petit écran : la légende et les filtres sont repliés au départ.
+export const PETIT_ECRAN = '(max-width: 599px)';
+
+// SEULE définition des classes : les bornes, les libellés et les couleurs. La légende, la couleur des cercles
+// et les filtres (src/filtres.js) la lisent ; ne jamais recopier ces valeurs ailleurs.
 // 5 classes en mg(NO3)/L, alignées sur la limite de qualité de l'eau potable : 50 mg/L.
 // Une valeur égale à la borne haute appartient à la classe ; au-dessus de 50, la limite est dépassée.
-const CLASSES = [
+export const CLASSES = [
   { max: 10, couleur: '#4575b4', libelle: '10 ou moins' },
   { max: 25, couleur: '#91bfdb', libelle: 'De 10 à 25' },
   { max: 50, couleur: '#fee090', libelle: 'De 25 à 50' },
   { max: 100, couleur: '#fc8d59', libelle: 'De 50 à 100 (limite dépassée)' },
   { max: Infinity, couleur: '#d73027', libelle: 'Plus de 100' },
 ];
+
+// Indice de la classe d'une valeur : la première dont la borne haute la contient.
+const classeDe = (valeur) => CLASSES.findIndex((classe) => valeur <= classe.max);
+
+// Marge de tolérance autour du doigt ou du curseur, en pixels : les points sont petits.
+const MARGE_TOUCHER = 14;
+const MARGE_SOURIS = 3;
 
 const MOIS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
 
@@ -68,7 +80,9 @@ function enGeoJson(stations) {
         commune: s.commune,
         code_dept: s.code_dept,
         date_analyse: s.date_analyse,
-        valeur: Number(s.valeur),
+        annee: s.annee,
+        valeur: s.valeur,
+        classe: s.classe,
         unite: s.unite,
       },
     })),
@@ -83,11 +97,7 @@ function formaterDate(aaaammjj) {
 const formaterValeur = (valeur) => valeur.toLocaleString('fr-FR', { maximumFractionDigits: 2 });
 
 // Couleur de chaque point selon sa classe.
-function expressionCouleur() {
-  const cas = [];
-  CLASSES.slice(0, -1).forEach((classe) => cas.push(['<=', ['get', 'valeur'], classe.max], classe.couleur));
-  return ['case', ...cas, CLASSES[CLASSES.length - 1].couleur];
-}
+const expressionCouleur = () => ['to-color', ['at', ['get', 'classe'], ['literal', CLASSES.map((classe) => classe.couleur)]]];
 
 function remplirLegende(stations) {
   const dates = stations.map((s) => s.date_analyse).sort();
@@ -95,7 +105,7 @@ function remplirLegende(stations) {
   const legende = document.getElementById('legende');
   // Le titre sert de bouton : sur petit écran, on peut replier la légende pour dégager la carte.
   const titre = document.createElement('summary');
-  titre.className = 'legende-titre';
+  titre.className = 'bloc-titre';
   titre.textContent = `Nitrates dans les eaux souterraines (${unite})`;
   const liste = document.createElement('ul');
   for (const classe of CLASSES) {
@@ -111,12 +121,23 @@ function remplirLegende(stations) {
   periode.textContent =
     `Dernière analyse de chaque station, du ${formaterDate(dates[0])} au ${formaterDate(dates[dates.length - 1])}.`;
   legende.replaceChildren(titre, liste, periode);
+  legende.open = !window.matchMedia(PETIT_ECRAN).matches;
   legende.hidden = false;
 }
 
+// Une station sans valeur ni date lisibles ne peut pas être classée : elle est ignorée.
+const estLisible = (s) => s.code_station && Number.isFinite(Number(s.valeur)) && /^\d{4}-\d{2}-\d{2}$/.test(s.date_analyse);
+
 export async function ajouterNitrates(carte) {
   const reponse = await fetch(nitratesUrl);
-  const stations = lireCsv(await reponse.text()).filter((s) => s.code_station);
+  const stations = lireCsv(await reponse.text())
+    .filter(estLisible)
+    .map((s) => ({
+      ...s,
+      valeur: Number(s.valeur),
+      classe: classeDe(Number(s.valeur)),
+      annee: Number(s.date_analyse.slice(0, 4)), // année de la dernière analyse de la station
+    }));
 
   carte.addSource(SOURCE, {
     type: 'geojson',
@@ -134,10 +155,12 @@ export async function ajouterNitrates(carte) {
       layout: { 'circle-sort-key': ['get', 'valeur'] }, // les valeurs fortes restent visibles au-dessus
       paint: {
         'circle-color': expressionCouleur(),
-        'circle-radius': ['interpolate', ['linear'], ['zoom'], 4, 2.5, 8, 4.5, 11, 8],
+        // Petits sur la vue France entière (22 000 points), plus grands quand on zoome ; l'opacité réduite
+        // et le trait fin laissent voir les zones denses au lieu d'un aplat.
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 4, 1.4, 6, 2, 8, 3.8, 11, 7, 14, 10],
         'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': 0.8,
-        'circle-opacity': 0.9,
+        'circle-stroke-width': ['interpolate', ['linear'], ['zoom'], 4, 0.2, 8, 0.7],
+        'circle-opacity': 0.8,
       },
     },
     premiereCoucheTexte,
@@ -145,6 +168,27 @@ export async function ajouterNitrates(carte) {
 
   remplirLegende(stations);
   activerInteraction(carte);
+  return stations;
+}
+
+// Stations sous un appui ou un clic, de la plus proche à la plus éloignée (à égalité : la valeur la plus forte,
+// celle qui est dessinée au-dessus). Une marge de tolérance entoure le point, plus large au doigt qu'à la souris.
+export function stationsSous(carte, point) {
+  if (!carte.getLayer(COUCHE_NITRATES)) return [];
+  const marge = window.matchMedia('(pointer: coarse)').matches ? MARGE_TOUCHER : MARGE_SOURIS;
+  const zone = [
+    [point.x - marge, point.y - marge],
+    [point.x + marge, point.y + marge],
+  ];
+  const distance = (station) => {
+    const position = carte.project(station.geometry.coordinates);
+    return Math.hypot(position.x - point.x, position.y - point.y);
+  };
+  return carte
+    .queryRenderedFeatures(zone, { layers: [COUCHE_NITRATES] })
+    .map((station) => ({ station, ecart: distance(station) }))
+    .sort((a, b) => a.ecart - b.ecart || b.station.properties.valeur - a.station.properties.valeur)
+    .map(({ station }) => station);
 }
 
 function activerInteraction(carte) {
@@ -171,7 +215,7 @@ function activerInteraction(carte) {
 
   // Le clic sur un point prime sur celui du département (voir src/departements.js, qui ignore ce clic).
   carte.on('click', (e) => {
-    const point = carte.queryRenderedFeatures(e.point, { layers: [COUCHE_NITRATES] })[0];
+    const point = stationsSous(carte, e.point)[0];
     if (!point) {
       fenetre.remove();
       return;
