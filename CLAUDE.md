@@ -18,6 +18,15 @@ Les données sont des fichiers statiques dans `data/`, chargés par le navigateu
 
 Il n'y a pas encore de tests ni de linter.
 
+## Déploiement
+
+- GitHub Pages, via `.github/workflows/deploy.yml` : `npm ci` puis `npm run build` (Node 22), publication de `dist/`
+  à chaque push sur `main` (ou lancement manuel). Aucune branche autre que `main` ne déploie.
+- Le site est servi dans un sous-chemin (`/carte-france/`) : garder `base: './'` dans `vite.config.js`
+  et ne jamais écrire de chemin absolu (`/data/...`) pour un fichier de données ou une image. Importer les fichiers avec `?url`.
+- Pour vérifier un déploiement en local : copier `dist/` dans un dossier `carte-france/`, servir son parent
+  avec un serveur statique, puis ouvrir `/carte-france/`.
+
 ## Structure
 
 - `src/main.js` : création de la carte, source et couche des départements

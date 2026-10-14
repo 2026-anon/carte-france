@@ -19,6 +19,14 @@ npm run preview  # prévisualiser dist/
 
 Le contenu de `dist/` peut être hébergé tel quel sur n'importe quel hébergement statique.
 
+## Déploiement (GitHub Pages)
+
+Chaque fusion sur `main` construit le site et le publie, via `.github/workflows/deploy.yml`.
+Le workflow peut aussi être lancé à la main depuis l'onglet « Actions ».
+
+Réglage à faire une seule fois : dans le dépôt, **Settings → Pages → Build and deployment → Source : GitHub Actions**.
+Le site est ensuite publié sur <https://2026-anon.github.io/carte-france/>.
+
 ## Structure
 
 - `src/` : code de l'application (`main.js`, `style.css`, textes français de MapLibre).
