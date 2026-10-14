@@ -1,6 +1,6 @@
 import * as maplibregl from 'maplibre-gl';
 import departementsUrl from '../data/departements.geojson?url';
-import { COUCHE_NITRATES } from './nitrates.js';
+import { stationsSous } from './nitrates.js';
 
 const SOURCE = 'departements';
 const COUCHE_FOND = 'departements-fond';
@@ -107,7 +107,7 @@ function activerInteraction(carte) {
   // « click » couvre aussi le toucher : MapLibre le déclenche pour un simple appui, pas pour un glissement.
   carte.on('click', (e) => {
     // Un point de mesure sous le doigt prime : sa fenêtre s'ouvre (src/nitrates.js), la sélection du département disparaît.
-    if (carte.getLayer(COUCHE_NITRATES) && carte.queryRenderedFeatures(e.point, { layers: [COUCHE_NITRATES] }).length > 0) {
+    if (stationsSous(carte, e.point).length > 0) {
       fenetre.remove();
       return;
     }

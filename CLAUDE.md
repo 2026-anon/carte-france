@@ -32,7 +32,8 @@ Il n'y a pas encore de tests ni de linter.
 - `src/main.js` : création de la carte et de ses contrôles
 - `src/departements.js` : source et couches des départements, survol, sélection, fenêtre d'information
 - `src/locale-fr.js` : traduction des textes de l'interface MapLibre
-- `src/nitrates.js` : couche des stations de nitrates (cercles), légende, fenêtre d'information
+- `src/nitrates.js` : couche des stations de nitrates (cercles), **définition des classes (`CLASSES`)**, légende, fenêtre d'information, zone de toucher (`stationsSous`)
+- `src/filtres.js` : filtres de la couche nitrates (cases par classe, curseur d'année, compteur, réinitialisation)
 - `src/style.css` : styles de la page
 - `data/` : données géographiques (`departements.geojson`, 96 départements métropolitains, propriétés `code` et `nom`)
 - `scripts/fetch_nitrates.py` : mise à jour de `data/nitrates_stations.csv` depuis Hub'Eau
@@ -84,6 +85,7 @@ Il n'y a pas encore de tests ni de linter.
   `code_dept` (texte), `date_analyse` (AAAA-MM-JJ), `valeur`, `unite` (telle que renvoyée : `mg(NO3)/L`).
 - `data/layers.csv` : catalogue des couches (`id,nom,fichier,type,cle_jointure,colonne_valeur,filtres,palette,unite,source`).
   Documentation seulement : le code ne le lit pas encore, les réglages de la couche sont dans `src/nitrates.js`.
+  La colonne `palette` renvoie à `CLASSES` : ne pas y recopier les couleurs.
 
 ### Mettre à jour les nitrates
 
@@ -96,10 +98,56 @@ département (et par période au-delà de 20000 analyses). La fenêtre est `aujo
 
 - Cercles MapLibre (`circle`), jamais de marqueurs HTML, sous les étiquettes du fond et au-dessus des départements.
 - 5 classes en mg(NO3)/L, alignées sur la limite de qualité de 50 mg/L : ≤ 10, ≤ 25, ≤ 50, ≤ 100, > 100 (la borne haute
-  est incluse ; au-dessus de 50, la limite est dépassée). Les mêmes bornes servent à la couleur des points et à la légende.
+  est incluse ; au-dessus de 50, la limite est dépassée).
+- **Les classes sont définies une seule fois**, dans `CLASSES` de `src/nitrates.js` (bornes, libellés, couleurs). À son chargement,
+  chaque station reçoit `classe` (indice dans `CLASSES`) et `annee` (année de `date_analyse`) ; la couleur des points, la légende
+  et les filtres lisent `CLASSES` ou ces propriétés. Ne jamais recopier une borne ou une couleur ailleurs.
+- La couleur est `['to-color', ['at', ['get', 'classe'], ['literal', couleurs]]]` : sans `to-color`, MapLibre refuse l'expression
+  (« Expected array<color> but found array<string> ») et la couche ne s'affiche pas.
 - Une station dont la dernière analyse n'a pas de valeur ou de coordonnées est ignorée (on ne retombe pas sur une analyse plus ancienne).
 - Ne jamais mélanger deux unités sans conversion explicite : le script affiche les unités rencontrées, une seule (`mg(NO3)/L`) à ce jour.
 - Clic ou toucher sur un point : fenêtre de la station (`.fenetre-station`), et le clic sur un point prime sur celui du département
   (`src/departements.js` l'ignore et ferme sa fenêtre). Même bandeau pleine largeur que les départements sous 560 px.
-- La légende (`<details id="legende">`) est repliable ; sous 560 px elle est remontée à `bottom: 96px` pour ne pas passer sous les crédits.
 - Le CSV (≈ 1,9 Mo) est chargé par le navigateur avec `?url` puis converti en GeoJSON ; sa limite de poids visée est ~10 Mo.
+
+### Filtres de la couche nitrates (`src/filtres.js`)
+
+- Bloc « Filtres » (`<details id="filtres">`) au-dessus de la légende : une case par classe (couleur et libellé lus dans `CLASSES`),
+  un curseur « Analyses depuis [année] », un compteur « N stations affichées sur 22 518 » et « Réinitialiser ».
+- Les filtres passent par `carte.setFilter` sur la couche existante :
+  `['all', ['in', ['get', 'classe'], ['literal', [...]]], ['>=', ['get', 'annee'], annee]]`. La source n'est ni rechargée ni recréée,
+  et les couches des départements n'ont aucun filtre.
+- Années min. et max. du curseur lues dans `date_analyse` (année de la dernière analyse de la station) ; total = stations chargées :
+  rien n'est écrit en dur. Le compteur vient d'une table classe × année calculée au chargement.
+- Une station filtrée n'est plus dessinée, donc plus cliquable : le clic retombe sur le département. Un point visible prime toujours.
+
+### Lisibilité et toucher
+
+- Rayon dépendant du zoom (1,4 px à z4, 10 px à z14), opacité 0,8, trait blanc fin ; `circle-sort-key` sur la valeur (les plus fortes dessus).
+- `stationsSous` (`src/nitrates.js`) cherche les stations dans un carré autour du point : 14 px si le pointeur principal est tactile
+  (`pointer: coarse`), 3 px à la souris ; la plus proche gagne (à égalité, la valeur la plus forte). Les départements l'utilisent aussi.
+
+### Panneau, légende et petit écran
+
+- `.panneau` (bas gauche) empile filtres puis légende : ils ne peuvent pas se recouvrir. Il reste au-dessus des crédits, dont la hauteur
+  est mesurée par un `ResizeObserver` (variable CSS `--bas-panneau`, `src/main.js`) : 1 ligne à 1280 px, 4 lignes à 390 px.
+  Il défile s'il est trop haut et laisse 236 px en haut sous 560 px (fenêtre d'information en bandeau).
+- Légende et filtres sont repliés au départ sous 600 px (`PETIT_ECRAN`, `src/nitrates.js`) ; le bandeau d'information garde son seuil de
+  560 px (`src/style.css`). Fonds opaques. Sur téléphone, les filtres ouverts couvrent la moitié gauche de la carte : les replier pour toucher un point.
+
+### Thème clair et noms français
+
+- `<meta name="color-scheme" content="only light">` et `:root { color-scheme: only light; }` empêchent l'assombrissement automatique de
+  Chrome (« Assombrir les sites Web ») ; chacun suffit, les deux sont gardés. Chrome affiche la valeur calculée `light only`.
+  Vérifié avec Chromium 141 en thème sombre et assombrissement forcé (`--enable-features=WebContentsForceDark`, canal `chromium`,
+  pas le headless shell) : sans, « De 25 à 50 » devient brun foncé ; avec, rien ne change. Pas testé sur Chrome pour Android.
+- `src/main.js` remplace le `text-field` des couches `place` du fond (pays, villes) par `coalesce(name:fr, name)` à `style.load`.
+  Non vérifié sur les vraies tuiles OpenFreeMap : sans champ `name:fr`, on retombe sur le nom local.
+
+### Tester la couche nitrates
+
+- Aucune requête réseau : le style OpenFreeMap, les tuiles et les polices sont interceptés par Playwright (style minimal avec des couches `place`).
+- Accès à la carte pour les tests : ajouter `;window.__carte = carte;` au `src/main.js` servi par le serveur de développement (`page.route`),
+  sans modifier le dépôt. Valeurs attendues calculées à part (module `csv` de Python), jamais avec le code testé.
+- Pièges : en développement Vite demande deux fois le CSV (`…csv?import&url` puis les données) ; l'expression `at` du style-spec et
+  `createPropertyExpression` (argument `rootKey`) ; ouvrir les filtres sur téléphone avant de compter, et les replier avant de toucher la carte.
