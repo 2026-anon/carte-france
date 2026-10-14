@@ -32,8 +32,10 @@ Il n'y a pas encore de tests ni de linter.
 - `src/main.js` : création de la carte et de ses contrôles
 - `src/departements.js` : source et couches des départements, survol, sélection, fenêtre d'information
 - `src/locale-fr.js` : traduction des textes de l'interface MapLibre
+- `src/nitrates.js` : couche des stations de nitrates (cercles), légende, fenêtre d'information
 - `src/style.css` : styles de la page
 - `data/` : données géographiques (`departements.geojson`, 96 départements métropolitains, propriétés `code` et `nom`)
+- `scripts/fetch_nitrates.py` : mise à jour de `data/nitrates_stations.csv` depuis Hub'Eau
 - `public/` : fichiers servis tels quels (favicon)
 
 ## Conventions
@@ -75,3 +77,29 @@ Il n'y a pas encore de tests ni de linter.
 - `data/departements.geojson` : [gregoiredavid/france-geojson](https://github.com/gregoiredavid/france-geojson),
   `departements-version-simplifiee.geojson` (tracés IGN Admin Express COG 2018 simplifiés, codes INSEE).
   Licence ouverte Etalab : conserver la mention de la source (attribution de la source dans `src/departements.js`).
+- `data/nitrates_stations.csv` : nitrates dans les eaux souterraines, API Hub'Eau « Qualité des nappes d'eau souterraine »
+  (`/v1/qualite_nappes/analyses`, paramètre 1340), données ADES, Licence ouverte Etalab 2.0 (attribution dans `src/nitrates.js`).
+  Une ligne par station : la dernière analyse parmi celles des 5 dernières années. Colonnes : `code_station` (texte, `bss_id`),
+  `nom` (ancien code BSS : l'API ne fournit pas de nom de station), `lat`, `lon` (WGS84, 4 décimales), `commune`,
+  `code_dept` (texte), `date_analyse` (AAAA-MM-JJ), `valeur`, `unite` (telle que renvoyée : `mg(NO3)/L`).
+- `data/layers.csv` : catalogue des couches (`id,nom,fichier,type,cle_jointure,colonne_valeur,filtres,palette,unite,source`).
+  Documentation seulement : le code ne le lit pas encore, les réglages de la couche sont dans `src/nitrates.js`.
+
+### Mettre à jour les nitrates
+
+`python3 scripts/fetch_nitrates.py` (Python 3 standard, aucune dépendance ; environ 25 minutes : une requête par département,
+l'API est lente). Il réécrit `data/nitrates_stations.csv` et affiche le nombre de stations, celles ignorées et les unités.
+Limites de l'API respectées : page de 5000 au plus (max 20000) et profondeur `page × taille` ≤ 20000, d'où le découpage par
+département (et par période au-delà de 20000 analyses). La fenêtre est `aujourd'hui − 5 ans`.
+
+### Conventions de la couche nitrates
+
+- Cercles MapLibre (`circle`), jamais de marqueurs HTML, sous les étiquettes du fond et au-dessus des départements.
+- 5 classes en mg(NO3)/L, alignées sur la limite de qualité de 50 mg/L : ≤ 10, ≤ 25, ≤ 50, ≤ 100, > 100 (la borne haute
+  est incluse ; au-dessus de 50, la limite est dépassée). Les mêmes bornes servent à la couleur des points et à la légende.
+- Une station dont la dernière analyse n'a pas de valeur ou de coordonnées est ignorée (on ne retombe pas sur une analyse plus ancienne).
+- Ne jamais mélanger deux unités sans conversion explicite : le script affiche les unités rencontrées, une seule (`mg(NO3)/L`) à ce jour.
+- Clic ou toucher sur un point : fenêtre de la station (`.fenetre-station`), et le clic sur un point prime sur celui du département
+  (`src/departements.js` l'ignore et ferme sa fenêtre). Même bandeau pleine largeur que les départements sous 560 px.
+- La légende (`<details id="legende">`) est repliable ; sous 560 px elle est remontée à `bottom: 96px` pour ne pas passer sous les crédits.
+- Le CSV (≈ 1,9 Mo) est chargé par le navigateur avec `?url` puis converti en GeoJSON ; sa limite de poids visée est ~10 Mo.
