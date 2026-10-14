@@ -29,7 +29,8 @@ Il n'y a pas encore de tests ni de linter.
 
 ## Structure
 
-- `src/main.js` : création de la carte, source et couche des départements
+- `src/main.js` : création de la carte et de ses contrôles
+- `src/departements.js` : source et couches des départements, survol, sélection, fenêtre d'information
 - `src/locale-fr.js` : traduction des textes de l'interface MapLibre
 - `src/style.css` : styles de la page
 - `data/` : données géographiques (`departements.geojson`, 96 départements métropolitains, propriétés `code` et `nom`)
@@ -54,10 +55,23 @@ Il n'y a pas encore de tests ni de linter.
 - Son worker est un fichier séparé que Vite n'embarque pas : `src/main.js` l'importe avec `?url`
   et appelle `setWorkerUrl` avant de créer la carte. Sans cela : erreur « Worker failed to load ».
 - Les fichiers GeoJSON sont importés avec `?url` et chargés par MapLibre.
-- Les contours des départements sont insérés sous la première couche de texte du fond de carte, pour garder les étiquettes lisibles.
+- Les couches des départements sont insérées sous la première couche de texte du fond de carte, pour garder les étiquettes lisibles.
+- Interaction (`src/departements.js`) : la couche `departements-fond` (surface, transparente au repos) détecte le département
+  touché et porte le surlignage. Deux états `feature-state`, identifiés par le code INSEE en texte (`promoteId: 'code'`) :
+  `survol` (léger) et `selectionne` (marqué, contour épaissi). La sélection dure jusqu'à un clic hors des départements
+  ou la croix de la fenêtre ; une seule fenêtre existe à la fois, réutilisée.
+- L'événement `click` de MapLibre couvre la souris et le toucher (un appui, pas un glissement). Le survol n'est branché que si
+  `(hover: hover) and (pointer: fine)` : sur écran tactile, il resterait bloqué après un appui.
+- Le contenu de la fenêtre est créé une seule fois et seulement mis à jour. Appeler `setDOMContent`/`setHTML` sur une fenêtre
+  déjà ouverte recrée sa croix de fermeture sans son `aria-label`.
+- Sous 560 px de large, la fenêtre devient un bandeau pleine largeur en haut de l'écran (voir `src/style.css`) : ancrée au point
+  touché, elle dépasserait de l'écran dès qu'elle fait plus de la moitié de la largeur. En bas, elle passerait sous les crédits,
+  qui occupent plusieurs lignes sur téléphone.
+- Vérifier une interaction avec de vrais appuis (`page.touchscreen.tap` de Playwright, `hasTouch`) sur 390×844, 360×640 et 320×568,
+  puis regarder les captures : des mesures de position ne remplacent pas un coup d'œil (le recouvrement des crédits n'a été vu qu'ainsi).
 
 ## Données
 
 - `data/departements.geojson` : [gregoiredavid/france-geojson](https://github.com/gregoiredavid/france-geojson),
   `departements-version-simplifiee.geojson` (tracés IGN Admin Express COG 2018 simplifiés, codes INSEE).
-  Licence ouverte Etalab : conserver la mention de la source (attribution de la source dans `src/main.js`).
+  Licence ouverte Etalab : conserver la mention de la source (attribution de la source dans `src/departements.js`).
