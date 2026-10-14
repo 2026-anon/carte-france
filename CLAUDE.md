@@ -87,7 +87,7 @@ Il n'y a pas encore de tests ni de linter.
 - `data/nitrates_cours_eau.csv` : nitrates dans les eaux de surface (cours d'eau et plans d'eau), API Hub'Eau « Qualité des cours d'eau » v2
   (`/api/v2/qualite_rivieres/analyse_pc` et `station_pc`, paramètre SANDRE 1340), données Naïades, Licence ouverte Etalab 2.0.
   Mêmes colonnes et mêmes règles que `nitrates_stations.csv` (une ligne par station, dernière analyse sur 5 ans), mais `nom` est ici le
-  libellé de la station (`libelle_station`) et `code_station` le code Naïades (8 caractères, texte). **Pas encore affichée sur la carte.**
+  libellé de la station (`libelle_station`) et `code_station` le code Naïades (texte, 8 caractères le plus souvent, parfois 7 ou avec des tirets : `F31-4443`). **Pas encore affichée sur la carte.**
 - `data/layers.csv` : catalogue des couches (`id,nom,fichier,type,cle_jointure,colonne_valeur,filtres,palette,unite,source`).
   Documentation seulement : le code ne le lit pas encore, les réglages de la couche sont dans `src/nitrates.js`.
   La colonne `palette` renvoie à `CLASSES` : ne pas y recopier les couleurs.
