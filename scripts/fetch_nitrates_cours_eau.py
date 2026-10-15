@@ -9,7 +9,9 @@ Limites de l'API respectées : taille de page max 20000, profondeur (page × tai
 d'où une requête par département, découpée par période au-delà de 20000 résultats.
 
 Règles de sélection, dans cet ordre :
-1. Doublons : une même analyse peut revenir plusieurs fois (même code_analyse) ; elle n'est gardée qu'une fois.
+1. Doublons : une même analyse peut revenir plusieurs fois ; elle n'est gardée qu'une fois. Clé : (code_station, code_analyse).
+   Le code_analyse seul n'est PAS unique : 39 analyses de stations différentes partagent un même code (deux stations, deux
+   dates), et la déduplication sur ce seul champ en supprimait une au hasard de l'ordre des départements.
 2. Support : seul « Eau » (code_support 3) est retenu.
 3. Qualification : les analyses « Incorrecte » (2) et « Incertaine » (3) sont ignorées AVANT de choisir la dernière analyse
    de chaque station ; « Correcte » (1) et « Non qualifié » (4) sont gardées. Une station dont toutes les analyses sont ignorées
@@ -128,15 +130,16 @@ def cle_analyse(a):
 def selectionner(stations, lignes):
     """Applique les règles de sélection (voir l'en-tête). Renvoie (stations écrites, bilan)."""
     bilan = Counter()
-    vues = set()
+    vues = set()  # (code_station, code_analyse) déjà lus
     dernieres = {}  # code_station -> dernière analyse retenue (valeur absente comprise)
     stations_vues = set()
     for a in lignes:
         bilan['analyses lues'] += 1
-        if a['code_analyse'] in vues:
-            bilan['doublons de code_analyse'] += 1
+        cle_unique = (a['code_station'], a['code_analyse'])
+        if cle_unique in vues:
+            bilan['doublons (même station et même code_analyse)'] += 1
             continue
-        vues.add(a['code_analyse'])
+        vues.add(cle_unique)
         bilan['qualification ' + str(a['code_qualification'])] += 1
         if a['code_support'] != SUPPORT_EAU:
             bilan['hors support Eau'] += 1
