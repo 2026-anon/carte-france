@@ -93,7 +93,7 @@ Il n'y a pas encore de tests ni de linter.
   (`/api/v2/qualite_rivieres/analyse_pc` et `station_pc`, paramètre SANDRE 1340), données Naïades, Licence ouverte Etalab 2.0.
   Mêmes colonnes et mêmes règles que `nitrates_stations.csv` (une ligne par station, dernière analyse sur 5 ans), mais `nom` est ici le
   libellé de la station (`libelle_station`) et `code_station` le code Naïades (texte, 8 caractères le plus souvent, parfois 7 ou avec des tirets : `F31-4443`). Affichée sur la carte (couche `nitrates_eaux_surface`). `unite` vaut toujours `mg(NO3)/L` (voir « Unité » ci-dessous).
-- `data/rfn_lignes.geojson` (1,75 Mo, 0,5 Mo compressé), `data/rfn_gares.geojson` (0,6 Mo) et `data/rfn_meta.json` : réseau ferré national, **données dérivées sous
+- `data/rfn_lignes.geojson` (1,77 Mo, 0,5 Mo compressé), `data/rfn_gares.geojson` (0,6 Mo) et `data/rfn_meta.json` : réseau ferré national, **données dérivées sous
   licence ODbL** (voir `data/LICENCE_RFN.md` : attribution et partage à l'identique). Jeux, dates et règles : section « Réseau ferré national » ci-dessous.
 - `data/layers.csv` : catalogue des couches (`id,nom,fichier,type,cle_jointure,colonne_valeur,filtres,palette,unite,source`).
   Documentation seulement : le code ne le lit pas encore, les réglages des couches sont dans `COUCHES` (`src/nitrates.js`), dont l'`id`
@@ -206,9 +206,16 @@ enregistrements « électrifiées » et « LGV » n'ont pas de PK : les PK ne se
 - *nombre de voies* : nombre de voies principales (VPL, VPA, hors `EVIT`) du jeu des voies à moins de 15 m du milieu de l'arête, puis lissage (une valeur qui ne dure pas 1 km est absorbée
   par son voisin : les gares font monter le compte) ; repli sur le régime d'exploitation (double voie = 2, sinon 1) quand aucune voie n'est trouvée (1 066 km) ; plafonné à 3 (« voies multiples »).
   Contrôle, avant lissage : sur les arêtes en « double voie » du régime, 91 % ont 2 voies ou plus ; sur celles en voie unique où une voie est trouvée, 89 % n'en ont qu'une ;
-- *usage* : un tronçon exploité qui compte au moins une gare ouverte aux voyageurs est « mixte », sinon « fret » ;
-- *statuts* : exploitée = `EXPLOITE` ; **suspendue** = `NEUT`, `NEUT DEF`, `S9A3` (1 segment, ligne en travaux) ; **non exploitée** = `FERME`, `FERME ND`, `FERME D`, `FERME MV`, `FERME DT`.
-  Écartés (360 segments) : déclassées (`DEC V`, `DEC NV`, sorties du RFN), retranchée (`RETRANCHE`), transférées en voie de service (`VS`). Cette liste est dans `STATUTS` (`scripts/preparer_rfn.py`).
+- *usage* : un tronçon `(code_ligne, rg_troncon)` exploité est « mixte » s'il compte au moins **2 gares voyageurs réellement desservies**, sinon « fret » (`GARES_DESSERVIES_MIN`, `gares_desservies`).
+  Une gare est desservie si elle est marquée voyageurs dans `liste-des-gares` **et** (fréquentation 2024 > 0 dans `frequentation-gares` **ou** présente dans `gares-de-voyageurs`, rapprochement par code UIC à 8 chiffres).
+  Les LGV restent des LGV. Avant (au moins une gare voyageurs) : 1 434 km de fret ; après : 2 323 km, dans l'estimation lue sur le PDF SNCF (2 000–3 100) ; ce critère est une approximation (un tronçon bascule en entier) ;
+- *statuts* : exploitée = `EXPLOITE`. **Non exploitée** (pointillé) = `NEUT`, `NEUT DEF`, `S9A3` **et** `FERME`, `FERME ND`, `FERME D`, `FERME MV`, `FERME DT` : sur la carte SNCF (mars 2026) les tracés gris sont presque tous
+  en pointillé. **Suspendue** (longs tirets gris) : uniquement les segments `NEUT*`/`S9A3`/`FERME*`/`DEC V` des lignes de `SUSPENDUE_REPERES` (370, 229, 610, 580, 652, 447), **et seulement leurs arêtes à moins de 15 km d'un repère**
+  (le segment est découpé, `appliquer_suspendue`), plus le segment déclassé 035000 (entrée de `RELEVE_MANUEL`, règle `declassee_au_repere`, ~18,2 km autour de 48,23 N / 6,07 E). Résultat : 189 km de suspendue (400 km environ
+  sur le PDF : il en manque ; on n'ajoute pas de segments sans repère) et 5 319 km de non exploitée (le PDF en montre 2 000–3 100 : **écart restant d'environ 2 200 km**, presque tout des `NEUT` hors repères, que le PDF ne
+  montre peut-être pas ou plus : voir ci-dessous). **Les lignes dont le code n'apparaît que comme mixte ou fret sur le PDF (695, 705, 712, 613, 664, 686) gardent le statut des données ouvertes (« non exploitée »)** :
+  la carte SNCF date d'avril 2025 et les données ouvertes sont plus récentes (2026), un écart de date n'est pas une erreur de classement.
+  Écartés : déclassées (`DEC V`, `DEC NV`, sorties du RFN), retranchée (`RETRANCHE`), transférées en voie de service (`VS`), sauf reclassement ci-dessus. Cette liste est dans `STATUTS` (`scripts/preparer_rfn.py`).
 - *gares* : une gare par code UIC (les projections à moins de 2 km sont fusionnées) ; niveau d'intérêt = segment DRG A → national, B → régional, C → local, lu dans `gares-de-voyageurs` (2 757 gares),
   sinon `frequentation-gares` (143), sinon local par défaut (50, signalé dans la fenêtre) ; les gares ni voyageurs ni fret (2 647) ne sont pas représentées.
 
@@ -223,11 +230,11 @@ enregistrements « électrifiées » et « LGV » n'ont pas de PK : les PK ne se
   Deux cas particuliers, écrits en commentaire dans `RELEVE_MANUEL` : Royan–Saujon–Gémozac (546000) est **découpé** (`zone` : seules les arêtes dont le milieu est à moins de 8 km de 45,57 N / −0,75 E sont reclassées, 15,9 km
   sur 26,6) ; Cholet–Les Herbiers (526000, déclassée) passe par une **règle alternative** propre à cette entrée (code exact, milieu du segment à moins de 8 km de 46,9 N / −0,95 E, longueur de 0,6 à 1,6 fois 20 km, aucune gare
   relevée portée par ce code ; le segment porte pourtant d'autres gares, dont Les Herbiers), car Torfou et Les Brouzils sont sur d'autres codes.
-  **Écarts de statut** : les segments reclassés `R` et `A` portent `o`, le statut des données ouvertes (`E`, `N`, `F`, `D` déclassée), affiché dans la fenêtre (« Données ouvertes : … »). Montréjeau–Luchon (668000) est
+  **Écarts de statut** : les segments reclassés (`N`, `R`, `A`) et les lignes neutralisées dessinées en `F` portent `o`, le statut des données ouvertes (`E` exploitée, `N` neutralisée, `F` fermée, `D` déclassée), affiché dans la fenêtre (« Données ouvertes : … »). Montréjeau–Luchon (668000) est
   reclassé « suspendue, reprise par un autre gestionnaire » d'après le PDF SNCF de mars 2026 alors que **les données ouvertes la donnent « exploitée »** ; Dunkerque (302506) est dans le même cas.
-  Valeurs de `g` dans `rfn_lignes.geojson` : `E`, `N`, `F` (comme `STATUTS`), plus `R` (suspendue reprise par un autre gestionnaire) et `A` (autre réseau ou touristique) ; `c` vaut en plus `lgv_autre`. Résultat et
+  Valeurs de `g` dans `rfn_lignes.geojson` : `E` exploitée et `F` non exploitée (`STATUTS`), `N` suspendue (repères et relevé seulement), plus `R` (suspendue reprise par un autre gestionnaire) et `A` (autre réseau ou touristique) ; `c` vaut en plus `lgv_autre`. Résultat et
   entrées non appariées (à compléter par un relevé plus précis ou des codes confirmés) : voir le rapport de la PR.
-- *Approximations* : **mixte / fret** (aucun jeu ne donne l'usage : « fret » = tronçon exploité sans gare voyageurs, soit 1 434 km sur 27 220 km exploités) ; **voie métrique** (#ED1650) = lignes à voie étroite du RFN
+- *Approximations* : **mixte / fret** (aucun jeu ne donne l'usage : « fret » = tronçon exploité sans 2 gares voyageurs desservies, soit 2 323 km sur 27 220 km exploités) ; **voie métrique** (#ED1650) = lignes à voie étroite du RFN
   (5 lignes, 164 km), qui ne séparent pas « autre réseau » de « touristique » ; **évitements** = voies nommées `EVIT` du jeu des voies (194), dont 43 % sont à plus de 100 m de la ligne dessinée de même code (positions du jeu) ;
   **nombre de voies** (méthode ci-dessus) ; **national / régional / local** (les jeux ouverts parlent de « segment DRG » A/B/C sans le définir ; la correspondance est l'usage courant) ; **gare desservie** = drapeau
   « voyageurs » du RFN (59 des 2 950 gares n'ont aucun voyageur en 2024 dans la fréquentation).
@@ -243,12 +250,12 @@ enregistrements « électrifiées » et « LGV » n'ont pas de PK : les PK ne se
   tirets de la légende par `line-dasharray`, traits d'électrification par `line-pattern` (une image par couleur créée au chargement). Les noms de gares sont uniquement en `Noto Sans Regular/Bold/Italic`,
   les polices du style OpenFreeMap (non vérifié sur le vrai serveur de polices, inaccessible depuis l'environnement de développement).
 - Affichage progressif : national dès le zoom 4,5, régional 7, local et non desservies 9,5 ; en cas de collision, l'étiquette de la couche la plus haute (nationales) passe d'abord.
-- Filtres (bloc « Filtres du réseau ferré », visible quand une sous-couche l'est) : lignes par catégorie (LGV, LGV autre gestionnaire, mixte, fret, voie métrique, non exploitée ou suspendue, suspendue autre gestionnaire, autre réseau ou touristique), électrification, nombre de voies ; gares par niveau et
+- Filtres (bloc « Filtres du réseau ferré », visible quand une sous-couche l'est) : lignes par catégorie (LGV, LGV autre gestionnaire, mixte, fret, voie métrique, non exploitée ou suspendue [`F` et `N`], suspendue autre gestionnaire, autre réseau ou touristique), électrification, nombre de voies ; gares par niveau et
   par desserte voyageurs. Ils s'appliquent par `setFilter` sur les couches existantes (`['all', filtre de base, filtre utilisateur]`). Un compteur donne les kilomètres de lignes (≈ : tracé simplifié, 0,7 % plus court)
   et le nombre de gares (avant l'effet du zoom).
 - Clic ou toucher : une gare (marge 4 px à la souris, 10 px au doigt) puis une ligne ouvrent une fenêtre (`.fenetre-station`, type « Réseau ferré national »). Priorité : station de nitrates > gare > ligne > département
   (`railSous`, `src/rail.js`, est aussi lu par `src/departements.js`).
-- Géométrie : Douglas-Peucker à 12 m et coordonnées à 5 décimales (1 m) : 1,75 Mo pour 2 912 traits et 73 588 sommets.
+- Géométrie : Douglas-Peucker à 12 m et coordonnées à 5 décimales (1 m) : 1,77 Mo pour 2 926 traits et 74 124 sommets.
 
 **Tester** : mêmes principes que « Tester la couche nitrates ». Pièges rencontrés : une expression `['==', 0, 1]` est lue comme un ancien filtre (« string expected ») : utiliser `['literal', false]` ;
 `queryRenderedFeatures` renvoie des objets dont `geometry` ne passe pas dans `page.evaluate` (en extraire les coordonnées dans la page) ; une position sous le panneau reçoit le clic du panneau ;

@@ -66,15 +66,131 @@
  },
  "statuts": {
   "EXPLOITE": "E",
-  "NEUT": "N",
-  "NEUT DEF": "N",
-  "S9A3": "N",
+  "NEUT": "F",
+  "NEUT DEF": "F",
+  "S9A3": "F",
   "FERME": "F",
   "FERME ND": "F",
   "FERME D": "F",
   "FERME MV": "F",
   "FERME DT": "F"
  },
+ "suspendue_par_reperes": {
+  "rayon_km": 15.0,
+  "reperes": {
+   "370": [
+    [
+     49.35,
+     1.05
+    ],
+    [
+     49.18,
+     1.13
+    ]
+   ],
+   "229": [
+    [
+     49.8,
+     3.83
+    ]
+   ],
+   "610": [
+    [
+     45.79,
+     0.42
+    ]
+   ],
+   "580": [
+    [
+     45.15,
+     -0.33
+    ]
+   ],
+   "652": [
+    [
+     43.82,
+     -0.47
+    ],
+    [
+     43.34,
+     0.05
+    ],
+    [
+     43.14,
+     0.09
+    ]
+   ],
+   "447": [
+    [
+     48.61,
+     -3.92
+    ]
+   ]
+  },
+  "segments": [
+   {
+    "code_ligne": "229000",
+    "statut_jeu_ouvert": "S9A3",
+    "km_suspendue": 32.6,
+    "km_non_exploitee": 23.0
+   },
+   {
+    "code_ligne": "370000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 8.5
+   },
+   {
+    "code_ligne": "370000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 7.2,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "370000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.4
+   },
+   {
+    "code_ligne": "447000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 25.4,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "580000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 7.4,
+    "km_ecartee": 27.5
+   },
+   {
+    "code_ligne": "580000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 14.9,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "610000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 34.3,
+    "km_non_exploitee": 32.0
+   },
+   {
+    "code_ligne": "652000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 26.1,
+    "km_non_exploitee": 30.2
+   },
+   {
+    "code_ligne": "652000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 22.6,
+    "km_non_exploitee": 15.2
+   }
+  ]
+ },
+ "gares_desservies_min": 2,
  "releve_manuel": {
   "source": "relevé manuel sur la carte SNCF Réseau « Le réseau ferré en France », mars 2026",
   "gare_max_m": 1000.0,
@@ -483,6 +599,21 @@
     ]
    },
    {
+    "entree": "Ligne 035000 (déclassée, suspendue sur la carte)",
+    "cible": "suspendue",
+    "code_releve": "035",
+    "reclasses": [
+     {
+      "code_ligne": "035000",
+      "statut_jeu_ouvert": "DEC V",
+      "km": 18.2,
+      "segment_km": 18.2,
+      "gares": []
+     }
+    ],
+    "non_retenus": []
+   },
+   {
     "entree": "Royan–Saujon–Gémozac",
     "cible": "autre",
     "code_releve": null,
@@ -637,11 +768,16 @@
   "km reclassés par le relevé manuel, autre": 147.6,
   "km reclassés par le relevé manuel, lgv_autre": 325.4,
   "km reclassés par le relevé manuel, suspendue_autre": 77.1,
-  "longueur km, exploitée, catégorie fret": 1427.3,
+  "km suspendue (repères et relevé), statut du jeu ouvert DEC V": 25.6,
+  "km suspendue (repères et relevé), statut du jeu ouvert FERME": 7.2,
+  "km suspendue (repères et relevé), statut du jeu ouvert FERME MV": 26.1,
+  "km suspendue (repères et relevé), statut du jeu ouvert NEUT": 97.1,
+  "km suspendue (repères et relevé), statut du jeu ouvert S9A3": 32.6,
+  "longueur km, exploitée, catégorie fret": 2322.8,
   "longueur km, exploitée, catégorie lgv": 2320.3,
   "longueur km, exploitée, catégorie lgv_autre": 300.8,
   "longueur km, exploitée, catégorie metrique": 164.4,
-  "longueur km, exploitée, catégorie mixte": 22965.8,
+  "longueur km, exploitée, catégorie mixte": 22070.4,
   "longueur km, exploitée, non électrifiée": 10416.2,
   "longueur km, exploitée, voies 1": 10229.6,
   "longueur km, exploitée, voies 2": 15748.4,
@@ -649,14 +785,14 @@
   "longueur km, exploitée, électrifiée": 16762.4,
   "longueur km, statut A": 147.6,
   "longueur km, statut E": 27178.7,
-  "longueur km, statut F": 2582.1,
-  "longueur km, statut N": 2899.9,
+  "longueur km, statut F": 5318.9,
+  "longueur km, statut N": 188.7,
   "longueur km, statut R": 77.1,
   "segments écartés (statut DEC NV)": 64,
-  "segments écartés (statut DEC V)": 131,
+  "segments écartés (statut DEC V)": 130,
   "segments écartés (statut RETRANCHE)": 28,
   "segments écartés (statut VS)": 132,
-  "traits de lignes écrits": 2918,
+  "traits de lignes écrits": 2926,
   "évitements (EVIT)": 194
  }
 }

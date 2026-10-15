@@ -320,7 +320,7 @@ export function railSous(carte, point) {
 }
 
 const TEXTE_CATEGORIE = { lgv: 'Ligne à grande vitesse', lgv_autre: 'LGV gérée par un autre gestionnaire', mixte: 'Ligne mixte', fret: 'Ligne fret', metrique: 'Ligne à voie métrique', evit: 'Évitement' };
-const TEXTE_STATUT_OUVERT = { E: 'exploitée', N: 'suspendue', F: 'non exploitée (fermée)', D: 'déclassée' };
+const TEXTE_STATUT_OUVERT = { E: 'exploitée', N: 'neutralisée', F: 'non exploitée (fermée)', D: 'déclassée' };
 const TEXTE_VOIES = { 1: 'voie unique', 2: 'double voie', 3: 'voies multiples' };
 const TEXTE_NIVEAU = { N: "d'intérêt national", R: "d'intérêt régional", L: "d'intérêt local" };
 
@@ -355,11 +355,11 @@ function activerInteraction(carte) {
         ligne1.textContent = `${TEXTE_CATEGORIE[p.c]}, exploitée`;
         ligne2.textContent = p.c === 'lgv' || p.c === 'lgv_autre' || p.c === 'evit' ? '' : `${voies}, ${p.e ? 'électrifiée' : 'non électrifiée'}`;
       } else {
-        ligne1.textContent = { N: 'Ligne suspendue (neutralisée)', R: 'Ligne suspendue, reprise programmée par un autre gestionnaire',
-          A: 'Autre réseau ou exploitation touristique' }[g] || 'Ligne non exploitée (fermée)';
-        ligne2.textContent = g === 'R' || g === 'A' ? 'Relevé manuel, carte SNCF, mars 2026' : '';
+        ligne1.textContent = { N: 'Ligne suspendue, reprise programmée ou possible', R: 'Ligne suspendue, reprise programmée par un autre gestionnaire',
+          A: 'Autre réseau ou exploitation touristique' }[g] || 'Ligne non exploitée';
+        ligne2.textContent = g === 'N' || g === 'R' || g === 'A' ? 'Relevé manuel, carte SNCF, mars 2026' : '';
       }
-      // Relevé manuel : le statut des données ouvertes peut différer (ex. Montréjeau–Luchon, « exploitée » dans les données).
+      // Quand le classement vient d'un relevé manuel ou d'une neutralisation, on rappelle le statut des données ouvertes (ex. Luchon : « exploitée »).
       ligne3.textContent = p.o ? `Données ouvertes : ${TEXTE_STATUT_OUVERT[p.o]}` : '';
     }
     for (const l of [ligne1, ligne2, ligne3]) l.hidden = l.textContent === '';
