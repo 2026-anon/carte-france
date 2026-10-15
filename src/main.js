@@ -5,6 +5,7 @@ import { localeFr } from './locale-fr.js';
 import { ajouterDepartements } from './departements.js';
 import { ajouterNitrates } from './nitrates.js';
 import { ajouterFiltres } from './filtres.js';
+import { ajouterCouches } from './couches.js';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 
 // Depuis MapLibre 6, le worker est un fichier à part que Vite n'embarque pas tout seul.
@@ -41,7 +42,7 @@ carte.on('style.load', () => {
   }
 });
 
-// Le panneau (filtres, légende) reste au-dessus des crédits, dont la hauteur varie avec la largeur de l'écran
+// Le panneau (couches, filtres, légende) reste au-dessus des crédits, dont la hauteur varie avec la largeur de l'écran
 // et avec la longueur des mentions : on la mesure plutôt que de la deviner (voir .panneau dans style.css).
 const credits = carte.getContainer().querySelector('.maplibregl-ctrl-attrib');
 new ResizeObserver(() => {
@@ -51,6 +52,7 @@ new ResizeObserver(() => {
 
 carte.on('load', async () => {
   ajouterDepartements(carte);
-  const stations = await ajouterNitrates(carte);
-  ajouterFiltres(carte, stations);
+  const couches = await ajouterNitrates(carte);
+  const filtres = ajouterFiltres(carte, couches);
+  ajouterCouches(carte, couches, filtres.majCompteurs);
 });

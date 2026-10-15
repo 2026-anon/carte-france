@@ -6,10 +6,12 @@ Carte interactive de la France métropolitaine, entièrement côté navigateur (
 La carte affiche les contours des départements sur un fond sobre et gratuit,
 [OpenFreeMap](https://openfreemap.org) (style « positron »), sans clé API.
 
-La carte affiche aussi les nitrates dans les eaux souterraines (stations ADES / Hub'Eau, 5 classes autour du seuil de 50 mg/L) ;
-un clic sur une station ouvre sa fiche (voir `CLAUDE.md` pour mettre les données à jour).
-Un bloc « Filtres » (replié par défaut sur petit écran) permet de masquer des classes et de ne garder que les stations analysées
-depuis une année donnée, avec le nombre de stations affichées ; la légende est repliable.
+La carte affiche aussi les nitrates dans les eaux : les eaux souterraines (stations ADES / Hub'Eau) et les eaux de surface (stations Naïades / Hub'Eau),
+selon les mêmes 5 classes autour du seuil de 50 mg/L, donc comparables. Le remplissage d'un point dit sa classe ; le contour dit la couche
+(trait blanc fin pour les eaux souterraines, contour bleu foncé plus épais pour les eaux de surface). Un clic sur une station ouvre sa fiche
+(voir `CLAUDE.md` pour mettre les données à jour).
+Un bloc « Couches » affiche ou masque chaque couche. Un bloc « Filtres » permet de masquer des classes et de ne garder que les stations analysées
+depuis une année donnée, pour les deux couches, avec le nombre de stations affichées par couche. Couches, filtres et légende sont repliés par défaut sur petit écran.
 
 Un clic (ou un appui sur téléphone) sur un département ouvre une fenêtre avec son nom et son code INSEE.
 Le département reste surligné jusqu'à un clic ailleurs ou sur la croix de la fenêtre.

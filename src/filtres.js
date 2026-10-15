@@ -1,22 +1,19 @@
-import { CLASSES, COUCHE_NITRATES, PETIT_ECRAN } from './nitrates.js';
+import { CLASSES, PETIT_ECRAN, couchesVisibles } from './nitrates.js';
+import { creer } from './dom.js';
 
 const formaterNombre = (n) => n.toLocaleString('fr-FR');
 
-function creer(balise, classe, texte) {
-  const element = document.createElement(balise);
-  if (classe) element.className = classe;
-  if (texte !== undefined) element.textContent = texte;
-  return element;
-}
+// Filtres des couches de nitrates : classes (cases à cocher) et année de la dernière analyse (curseur).
+// Les mêmes filtres s'appliquent à toutes les couches, par un filtre MapLibre sur chaque couche existante :
+// les sources ne sont ni rechargées ni recréées. Seuls les points sont filtrés : les départements et le
+// comportement du clic ne changent pas (une station filtrée n'est plus dessinée, donc plus cliquable).
+// `couches` : [{ config, stations }] (voir ajouterNitrates). Renvoie majCompteurs, à rappeler quand une couche
+// est affichée ou masquée.
+export function ajouterFiltres(carte, couches) {
+  const stations = couches.flatMap((couche) => couche.stations);
+  if (stations.length === 0) return { majCompteurs() {} };
 
-// Filtres de la couche nitrates : classes (cases à cocher) et année de la dernière analyse (curseur).
-// Ils agissent par un filtre MapLibre sur la couche existante : la source n'est ni rechargée ni recréée.
-// Seuls les points sont filtrés : les départements et le comportement du clic ne changent pas.
-export function ajouterFiltres(carte, stations) {
-  if (stations.length === 0) return;
-  const total = stations.length;
-
-  // Années min. et max. lues dans les données (colonne date_analyse du CSV), jamais écrites en dur.
+  // Années min. et max. lues dans les données (colonne date_analyse des CSV), jamais écrites en dur.
   let anneeMin = Infinity;
   let anneeMax = -Infinity;
   for (const s of stations) {
@@ -24,17 +21,20 @@ export function ajouterFiltres(carte, stations) {
     anneeMax = Math.max(anneeMax, s.annee);
   }
 
-  // Nombre de stations par classe et par année : le compteur s'en déduit sans reparcourir les stations.
-  const comptes = CLASSES.map(() => new Array(anneeMax - anneeMin + 1).fill(0));
-  for (const s of stations) comptes[s.classe][s.annee - anneeMin] += 1;
+  // Nombre de stations par couche, par classe et par année : les compteurs s'en déduisent sans reparcourir les stations.
+  const comptes = couches.map(() => CLASSES.map(() => new Array(anneeMax - anneeMin + 1).fill(0)));
+  couches.forEach((couche, i) => {
+    for (const s of couche.stations) comptes[i][s.classe][s.annee - anneeMin] += 1;
+  });
 
   const etat = { classes: new Set(CLASSES.keys()), annee: anneeMin };
 
   const titre = creer('summary', 'bloc-titre', 'Filtres');
 
   // Une case par classe, avec sa couleur et son libellé : tout est lu dans CLASSES.
-  const groupe = creer('fieldset', 'filtres-classes');
-  groupe.append(creer('legend', 'filtres-intitule', `Classes (${stations[0].unite})`));
+  const unites = [...new Set(stations.map((s) => s.unite))].join(', ');
+  const groupe = creer('fieldset', 'case-groupe');
+  groupe.append(creer('legend', 'case-intitule', `Classes (${unites})`));
   const cases = CLASSES.map((classe, i) => {
     const caseACocher = creer('input');
     caseACocher.type = 'checkbox';
@@ -46,7 +46,7 @@ export function ajouterFiltres(carte, stations) {
     });
     const pastille = creer('span', 'legende-pastille');
     pastille.style.background = classe.couleur;
-    const ligne = creer('label', 'filtres-ligne');
+    const ligne = creer('label', 'case-ligne');
     ligne.append(caseACocher, pastille, classe.libelle);
     groupe.append(ligne);
     return caseACocher;
@@ -74,8 +74,12 @@ export function ajouterFiltres(carte, stations) {
   const annee = creer('div', 'filtres-annee');
   annee.append(etiquette, curseur, bornes, note);
 
-  const compteur = creer('p', 'filtres-compteur');
-  compteur.setAttribute('role', 'status');
+  // Un compteur par couche visible : « Eaux souterraines : N stations affichées sur M ».
+  const compteurs = couches.map(() => creer('p', 'filtres-compteur'));
+  const aucune = creer('p', 'filtres-compteur', 'Aucune couche affichée.');
+  const zoneCompteurs = creer('div', 'filtres-compteurs');
+  zoneCompteurs.setAttribute('role', 'status');
+  zoneCompteurs.append(...compteurs, aucune);
 
   const reinitialiser = creer('button', 'filtres-reinit', 'Réinitialiser');
   reinitialiser.type = 'button';
@@ -87,28 +91,35 @@ export function ajouterFiltres(carte, stations) {
     appliquer();
   });
 
-  function majCompteur() {
+  function majCompteurs() {
     valeurAnnee.textContent = String(etat.annee);
-    let affichees = 0;
-    for (const i of etat.classes) {
-      for (let a = etat.annee; a <= anneeMax; a++) affichees += comptes[i][a - anneeMin];
-    }
-    const libelle = affichees > 1 ? 'stations affichées' : 'station affichée';
-    compteur.textContent = `${formaterNombre(affichees)} ${libelle} sur ${formaterNombre(total)}`;
+    const visibles = new Set(couchesVisibles(carte).map((config) => config.id));
+    couches.forEach(({ config, stations: deLaCouche }, i) => {
+      let affichees = 0;
+      for (const c of etat.classes) {
+        for (let a = etat.annee; a <= anneeMax; a++) affichees += comptes[i][c][a - anneeMin];
+      }
+      const libelle = affichees > 1 ? 'stations affichées' : 'station affichée';
+      compteurs[i].textContent = `${config.nom} : ${formaterNombre(affichees)} ${libelle} sur ${formaterNombre(deLaCouche.length)}`;
+      compteurs[i].hidden = !visibles.has(config.id);
+    });
+    aucune.hidden = visibles.size > 0;
   }
 
   function appliquer() {
-    carte.setFilter(COUCHE_NITRATES, [
+    const filtre = [
       'all',
       ['in', ['get', 'classe'], ['literal', [...etat.classes]]],
       ['>=', ['get', 'annee'], etat.annee],
-    ]);
-    majCompteur();
+    ];
+    for (const { config } of couches) carte.setFilter(config.id, filtre);
+    majCompteurs();
   }
 
-  majCompteur();
+  majCompteurs();
   const bloc = document.getElementById('filtres');
-  bloc.replaceChildren(titre, groupe, annee, compteur, reinitialiser);
+  bloc.replaceChildren(titre, groupe, annee, zoneCompteurs, reinitialiser);
   bloc.open = !window.matchMedia(PETIT_ECRAN).matches;
   bloc.hidden = false;
+  return { majCompteurs };
 }
