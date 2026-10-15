@@ -1,6 +1,7 @@
 import * as maplibregl from 'maplibre-gl';
 import departementsUrl from '../data/departements.geojson?url';
 import { stationsSous } from './nitrates.js';
+import { railSous } from './rail.js';
 
 const SOURCE = 'departements';
 const COUCHE_FOND = 'departements-fond';
@@ -107,7 +108,8 @@ function activerInteraction(carte) {
   // « click » couvre aussi le toucher : MapLibre le déclenche pour un simple appui, pas pour un glissement.
   carte.on('click', (e) => {
     // Un point de mesure sous le doigt prime : sa fenêtre s'ouvre (src/nitrates.js), la sélection du département disparaît.
-    if (stationsSous(carte, e.point).length > 0) {
+    // Il en va de même d'une gare ou d'une ligne du réseau ferré affiché (src/rail.js).
+    if (stationsSous(carte, e.point).length > 0 || railSous(carte, e.point).length > 0) {
       fenetre.remove();
       return;
     }

@@ -13,6 +13,12 @@ selon les mêmes 5 classes autour du seuil de 50 mg/L, donc comparables. Le remp
 Un bloc « Couches » affiche ou masque chaque couche. Un bloc « Filtres » permet de masquer des classes et de ne garder que les stations analysées
 depuis une année donnée, pour les deux couches, avec le nombre de stations affichées par couche. Couches, filtres et légende sont repliés par défaut sur petit écran.
 
+Le réseau ferré national (lignes et gares, données SNCF Réseau, ODbL) est une couche à part, décochée au départ : ses deux sous-couches,
+les lignes et les gares, se cochent séparément dans le bloc « Couches » et ne sont chargées qu'à la première activation. Les lignes suivent la légende
+de la carte « Le réseau ferré en France » (LGV, lignes mixtes et fret, non exploitées, suspendues ; 1, 2 ou 3 traits selon les voies ; traits perpendiculaires
+pour l'électrification) et les gares trois niveaux d'intérêt, qui apparaissent progressivement avec le zoom. Des filtres et une légende leur sont dédiés.
+`python3 scripts/preparer_rfn.py` (Python 3 et numpy) régénère ces données ; les écarts avec la légende officielle sont listés dans `CLAUDE.md`.
+
 Un clic (ou un appui sur téléphone) sur un département ouvre une fenêtre avec son nom et son code INSEE.
 Le département reste surligné jusqu'à un clic ailleurs ou sur la croix de la fenêtre.
 Sur ordinateur, le département sous le curseur est aussi surligné.

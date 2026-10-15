@@ -6,6 +6,7 @@ import { ajouterDepartements } from './departements.js';
 import { ajouterNitrates } from './nitrates.js';
 import { ajouterFiltres } from './filtres.js';
 import { ajouterCouches } from './couches.js';
+import { ajouterRail } from './rail.js';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 
 // Depuis MapLibre 6, le worker est un fichier à part que Vite n'embarque pas tout seul.
@@ -54,5 +55,5 @@ carte.on('load', async () => {
   ajouterDepartements(carte);
   const couches = await ajouterNitrates(carte);
   const filtres = ajouterFiltres(carte, couches);
-  ajouterCouches(carte, couches, filtres.majCompteurs);
+  ajouterCouches(carte, couches, filtres.majCompteurs, ajouterRail(carte));
 });

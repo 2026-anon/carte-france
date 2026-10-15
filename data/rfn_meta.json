@@ -1,0 +1,109 @@
+{
+ "genere_le": "2026-10-15",
+ "sources": {
+  "formes-des-lignes-du-rfn": {
+   "titre": "Fichier de formes des lignes du Réseau Ferré National",
+   "editeur": "SNCF Réseau",
+   "licence": "Open Database License (ODbL)",
+   "modifie": "2022-03-24",
+   "donnees_du": "2026-02-19"
+  },
+  "liste-des-lignes-electrifiees": {
+   "titre": "Liste des lignes électrifiées",
+   "editeur": "SNCF Réseau",
+   "licence": "Open Database License (ODbL)",
+   "modifie": "2020-05-26",
+   "donnees_du": "2026-02-19"
+  },
+  "lignes-lgv-et-par-ecartement": {
+   "titre": "Lignes LGV et par écartement",
+   "editeur": "SNCF Réseau",
+   "licence": "Open Database License (ODbL)",
+   "modifie": "2020-05-26",
+   "donnees_du": "2026-02-26"
+  },
+  "fichier-de-formes-des-voies-du-reseau-ferre-national": {
+   "titre": "Fichier de formes des voies du Réseau Ferré National",
+   "editeur": "SNCF Réseau",
+   "licence": "Open Database License (ODbL)",
+   "modifie": "2020-09-29",
+   "donnees_du": "2026-08-12"
+  },
+  "regime-dexploitation-des-lignes": {
+   "titre": "Régime d'exploitation des lignes",
+   "editeur": "SNCF Réseau",
+   "licence": "Open Database License (ODbL)",
+   "modifie": "2022-03-24",
+   "donnees_du": "2024-03-28"
+  },
+  "liste-des-gares": {
+   "titre": "Liste des gares",
+   "editeur": "SNCF Réseau",
+   "licence": "Open Database License (ODbL)",
+   "modifie": "2022-03-24",
+   "donnees_du": "2025-10-02"
+  },
+  "gares-de-voyageurs": {
+   "titre": "Gares de voyageurs",
+   "editeur": "Gares & Connexions",
+   "licence": "Open Data Commons Open Database License (ODbL)",
+   "modifie": "2026-10-14",
+   "donnees_du": "2026-10-14"
+  },
+  "frequentation-gares": {
+   "titre": "Fréquentation en gares",
+   "editeur": "Gares & Connexions",
+   "licence": "Open Database License (ODbL)",
+   "modifie": "2024-09-06",
+   "donnees_du": "2025-07-03"
+  }
+ },
+ "parametres": {
+  "tolerance_voie_m": 15.0,
+  "longueur_min_voies_m": 1000.0,
+  "simplification_m": 12.0,
+  "decimales": 5
+ },
+ "statuts": {
+  "EXPLOITE": "E",
+  "NEUT": "N",
+  "NEUT DEF": "N",
+  "S9A3": "N",
+  "FERME": "F",
+  "FERME ND": "F",
+  "FERME D": "F",
+  "FERME MV": "F",
+  "FERME DT": "F"
+ },
+ "bilan": {
+  "arêtes exploitées sans voie trouvée (repli sur le régime d'exploitation ou 1 voie), km": 1065.5,
+  "gares : codes UIC projetés en plusieurs endroits éloignés (> 2 km), gardés séparément": 4,
+  "gares : desservie voyageurs, intérêt local": 1756,
+  "gares : desservie voyageurs, intérêt national": 133,
+  "gares : desservie voyageurs, intérêt régional": 1061,
+  "gares : niveau d'intérêt issu de Fréquentation en gares": 143,
+  "gares : niveau d'intérêt issu de Gares de voyageurs (segment DRG)": 2757,
+  "gares : niveau d'intérêt issu de aucun jeu (local par défaut)": 50,
+  "gares : non desservie voyageurs (fret), sans niveau": 469,
+  "gares ignorées : ni voyageurs ni fret": 2647,
+  "gares écrites": 3419,
+  "longueur km, exploitée, catégorie fret": 1433.9,
+  "longueur km, exploitée, catégorie lgv": 2621.1,
+  "longueur km, exploitée, catégorie metrique": 164.4,
+  "longueur km, exploitée, catégorie mixte": 23000.8,
+  "longueur km, exploitée, non électrifiée": 10416.2,
+  "longueur km, exploitée, voies 1": 10269.5,
+  "longueur km, exploitée, voies 2": 15750.1,
+  "longueur km, exploitée, voies 3": 1200.7,
+  "longueur km, exploitée, électrifiée": 16804.0,
+  "longueur km, statut E": 27220.3,
+  "longueur km, statut F": 2640.0,
+  "longueur km, statut N": 2899.9,
+  "segments écartés (statut DEC NV)": 64,
+  "segments écartés (statut DEC V)": 136,
+  "segments écartés (statut RETRANCHE)": 28,
+  "segments écartés (statut VS)": 132,
+  "traits de lignes écrits": 2912,
+  "évitements (EVIT)": 194
+ }
+}

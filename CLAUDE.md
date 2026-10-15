@@ -35,12 +35,14 @@ Il n'y a pas encore de tests ni de linter.
 - `src/nitrates.js` : couches de nitrates (cercles) : **définition des classes (`CLASSES`)** et **des couches (`COUCHES`, une configuration par couche)**,
   chargement des CSV, légende, fenêtre d'information, zone de toucher (`stationsSous`, `couchesVisibles`)
 - `src/filtres.js` : filtres des couches de nitrates (cases par classe, curseur d'année, un compteur par couche, réinitialisation)
-- `src/couches.js` : bloc « Couches » (une case par couche pour l'afficher ou la masquer)
+- `src/couches.js` : bloc « Couches » (une case par couche de nitrates, puis les deux sous-couches du réseau ferré)
+- `src/rail.js` : réseau ferré national (lignes et gares) : styles de la légende, chargement différé, filtres, légende, fenêtres d'information (`railSous`)
 - `src/dom.js` : `creer(balise, classe, texte)`, pour construire les blocs sans HTML interprété
 - `src/style.css` : styles de la page
 - `data/` : données géographiques (`departements.geojson`, 96 départements métropolitains, propriétés `code` et `nom`)
 - `scripts/fetch_nitrates.py` : mise à jour de `data/nitrates_stations.csv` depuis Hub'Eau
 - `scripts/fetch_nitrates_cours_eau.py` : mise à jour de `data/nitrates_cours_eau.csv` depuis Hub'Eau
+- `scripts/preparer_rfn.py` : préparation de `data/rfn_lignes.geojson`, `data/rfn_gares.geojson` et `data/rfn_meta.json` depuis les jeux SNCF Réseau
 - `public/` : fichiers servis tels quels (favicon)
 
 ## Conventions
@@ -91,6 +93,8 @@ Il n'y a pas encore de tests ni de linter.
   (`/api/v2/qualite_rivieres/analyse_pc` et `station_pc`, paramètre SANDRE 1340), données Naïades, Licence ouverte Etalab 2.0.
   Mêmes colonnes et mêmes règles que `nitrates_stations.csv` (une ligne par station, dernière analyse sur 5 ans), mais `nom` est ici le
   libellé de la station (`libelle_station`) et `code_station` le code Naïades (texte, 8 caractères le plus souvent, parfois 7 ou avec des tirets : `F31-4443`). Affichée sur la carte (couche `nitrates_eaux_surface`). `unite` vaut toujours `mg(NO3)/L` (voir « Unité » ci-dessous).
+- `data/rfn_lignes.geojson` (1,75 Mo, 0,5 Mo compressé), `data/rfn_gares.geojson` (0,6 Mo) et `data/rfn_meta.json` : réseau ferré national, **données dérivées sous
+  licence ODbL** (voir `data/LICENCE_RFN.md` : attribution et partage à l'identique). Jeux, dates et règles : section « Réseau ferré national » ci-dessous.
 - `data/layers.csv` : catalogue des couches (`id,nom,fichier,type,cle_jointure,colonne_valeur,filtres,palette,unite,source`).
   Documentation seulement : le code ne le lit pas encore, les réglages des couches sont dans `COUCHES` (`src/nitrates.js`), dont l'`id`
   est celui du catalogue. La colonne `palette` renvoie à `CLASSES` : ne pas y recopier les couleurs.
@@ -170,6 +174,75 @@ Il réécrit `data/nitrates_cours_eau.csv` et affiche en fin d'exécution un bil
 - Pour tester le script sans tout télécharger : `python3 scripts/fetch_nitrates_cours_eau.py --departements 61 2A 64 --sortie /tmp/test.csv`, puis comparer
   aux lignes du CSV de ces départements (le 61 et la 2A ont un `code_analyse` en commun : cas de test de la déduplication).
 - Classes d'affichage : celles de `CLASSES` dans `src/nitrates.js`, à ne pas recopier.
+
+### Réseau ferré national (`scripts/preparer_rfn.py`, `src/rail.js`)
+
+**Mise à jour** : `pip install numpy` puis `python3 scripts/preparer_rfn.py` (≈ 6 minutes : le comptage des voies est la partie lente). Il télécharge les jeux en
+GeoJSON dans `scripts/brut_rfn/` (ignoré par git ; `--telecharger` pour les retélécharger) et réécrit les trois fichiers de `data/`. Il affiche un bilan (km par statut,
+catégorie, électrification et nombre de voies ; gares par niveau et par source du niveau). `rfn_meta.json` garde les jeux, leurs dates et licences, les paramètres et le bilan.
+
+**Jeux utilisés** (catalogue `ressources.data.sncf.com/api/explore/v2.1`, tous ODbL, éditeur SNCF Réseau sauf les deux de Gares & Connexions ; « données du » = `data_processed`) :
+
+| Jeu | Rôle | Données du |
+|---|---|---|
+| `formes-des-lignes-du-rfn` | géométrie et statut (colonne `mnemo`) des lignes | 2026-02-19 |
+| `liste-des-lignes-electrifiees` | électrification | 2026-02-19 |
+| `lignes-lgv-et-par-ecartement` | LGV, voie étroite | 2026-02-26 |
+| `fichier-de-formes-des-voies-du-reseau-ferre-national` | nombre de voies (VPL, VPA), évitements (`EVIT`) | 2026-08-12 |
+| `regime-dexploitation-des-lignes` | repli du nombre de voies | 2024-03-28 |
+| `liste-des-gares` | gares du RFN (voyageurs O/N, fret O/N), position projetée sur la ligne | 2025-10-02 |
+| `gares-de-voyageurs` (Gares & Connexions) | segment DRG A/B/C | 2026-10-14 |
+| `frequentation-gares` (Gares & Connexions) | segment DRG de repli | 2025-07-03 |
+
+Critère « moins de 5 ans » : jugé sur la date des **données**. Trois jeux affichent une date de *métadonnée* (`modified`) de 2020 (électrifiées, LGV/écartement, voies) mais
+leurs données sont de 2026 (descriptions : « mise à jour le 19/02/2026 », « 26/02/2026 »). data.gouv.fr ne les republie pas plus récemment (formes des lignes : 2022-03-24).
+Domaines joints : `ressources.data.sncf.com` (accessible) ; `www.data.gouv.fr` (réponses intermittentes : connexion réinitialisée) ; `data.gouv.fr` sans `www` est refusé par le proxy de
+l'environnement (`CONNECT` 403), sans conséquence ici.
+
+**Rattachement des attributs aux lignes** (géométrie = celle des formes de lignes, découpée en arêtes ; les clés `(code_ligne, rg_troncon)` ne sont pas uniques et la moitié des
+enregistrements « électrifiées » et « LGV » n'ont pas de PK : les PK ne servent donc pas) :
+- *électrifiée* : les deux extrémités de l'arête sont des sommets d'une portion électrifiée de la même ligne (99,5 % des sommets de ce jeu sont des sommets des formes : rattachement exact) ;
+- *LGV, voie étroite* : même méthode avec `catlig` (97,6 %) ;
+- *nombre de voies* : nombre de voies principales (VPL, VPA, hors `EVIT`) du jeu des voies à moins de 15 m du milieu de l'arête, puis lissage (une valeur qui ne dure pas 1 km est absorbée
+  par son voisin : les gares font monter le compte) ; repli sur le régime d'exploitation (double voie = 2, sinon 1) quand aucune voie n'est trouvée (1 066 km) ; plafonné à 3 (« voies multiples »).
+  Contrôle : sur les arêtes en « double voie » du régime, 91 % ont 2 voies ou plus ; sur les voies uniques, 88 % ont 1 voie ;
+- *usage* : un tronçon exploité qui compte au moins une gare ouverte aux voyageurs est « mixte », sinon « fret » ;
+- *statuts* : exploitée = `EXPLOITE` ; **suspendue** = `NEUT`, `NEUT DEF`, `S9A3` (1 segment, ligne en travaux) ; **non exploitée** = `FERME`, `FERME ND`, `FERME D`, `FERME MV`, `FERME DT`.
+  Écartés (360 segments) : déclassées (`DEC V`, `DEC NV`, sorties du RFN), retranchée (`RETRANCHE`), transférées en voie de service (`VS`). Cette liste est dans `STATUTS` (`scripts/preparer_rfn.py`).
+- *gares* : une gare par code UIC (les projections à moins de 2 km sont fusionnées) ; niveau d'intérêt = segment DRG A → national, B → régional, C → local, lu dans `gares-de-voyageurs` (2 757 gares),
+  sinon `frequentation-gares` (143), sinon local par défaut (50, signalé dans la fenêtre) ; les gares ni voyageurs ni fret (2 647) ne sont pas représentées.
+
+**Écarts avec la légende officielle** (mars 2026) :
+- *Non reconstituables, aucune donnée* : « LGV gérée par un autre gestionnaire » (#00A9AC), « ligne suspendue, reprise par un autre gestionnaire » (#00A9AC, longs tirets), « autre réseau ou exploitation
+  touristique » (#DC8E62). Les jeux ouverts ne décrivent que le RFN et n'ont aucun champ gestionnaire ou exploitant ; ces trois catégories ne sont donc pas dessinées (la légende le dit). Les LGV de ces
+  gestionnaires sont dessinées en bleu LGV ordinaire.
+- *Approximations* : **mixte / fret** (aucun jeu ne donne l'usage : « fret » = tronçon exploité sans gare voyageurs, soit 1 434 km sur 27 220 km exploités) ; **voie métrique** (#ED1650) = lignes à voie étroite du RFN
+  (5 lignes, 164 km), qui ne séparent pas « autre réseau » de « touristique » ; **évitements** = voies nommées `EVIT` du jeu des voies (194), dont 43 % sont à plus de 100 m de la ligne dessinée de même code (positions du jeu) ;
+  **nombre de voies** (méthode ci-dessus) ; **national / régional / local** (les jeux ouverts parlent de « segment DRG » A/B/C sans le définir ; la correspondance est l'usage courant) ; **gare desservie** = drapeau
+  « voyageurs » du RFN (59 des 2 950 gares n'ont aucun voyageur en 2024 dans la fréquentation).
+- *Différences de style* : les traits d'électrification sont un motif répété à partir du zoom 7 ; une LGV est toujours dessinée en double trait, quel que soit son nombre de voies ; les évitements suivent
+  la case « Mixte » des filtres ; les noms de gares sont placés sous les étiquettes du fond de carte (qui gardent la priorité en cas de collision).
+
+**Conventions de la couche** :
+- Deux sous-couches décochées au départ, **chargées à la première activation** (`afficher` dans `src/rail.js`) : au démarrage, la carte et ses requêtes sont celles d'avant. En cas d'échec réseau la case est rendue
+  et un message s'affiche ; un nouvel essai est possible. Une sous-couche masquée est `visibility: none`, sa source reste chargée.
+- Ordre de dessin : lignes **sous** les points de nitrates (qui restent lisibles) ; gares au-dessus d'eux mais sous les étiquettes du fond. Les contours des départements passent à l'opacité 0,3 tant que le réseau est
+  affiché (ils se confondaient avec les lignes) et retrouvent leur valeur ensuite.
+- Styles : `COULEURS` (une seule définition des couleurs de lignes) et `NIVEAUX` (gares) dans `src/rail.js`. 2 traits = deux couches décalées (`line-offset` ±, 3 traits = un trait central et deux latéraux),
+  tirets de la légende par `line-dasharray`, traits d'électrification par `line-pattern` (une image par couleur créée au chargement). Les noms de gares sont uniquement en `Noto Sans Regular/Bold/Italic`,
+  les polices du style OpenFreeMap (non vérifié sur le vrai serveur de polices, inaccessible depuis l'environnement de développement).
+- Affichage progressif : national dès le zoom 4,5, régional 7, local et non desservies 9,5 ; en cas de collision, l'étiquette de la couche la plus haute (nationales) passe d'abord.
+- Filtres (bloc « Filtres du réseau ferré », visible quand une sous-couche l'est) : lignes par catégorie (LGV, mixte, fret, voie métrique, non exploitée ou suspendue), électrification, nombre de voies ; gares par niveau et
+  par desserte voyageurs. Ils s'appliquent par `setFilter` sur les couches existantes (`['all', filtre de base, filtre utilisateur]`). Un compteur donne les kilomètres de lignes (≈ : tracé simplifié, 0,7 % plus court)
+  et le nombre de gares (avant l'effet du zoom).
+- Clic ou toucher : une gare (marge 4 px à la souris, 10 px au doigt) puis une ligne ouvrent une fenêtre (`.fenetre-station`, type « Réseau ferré national »). Priorité : station de nitrates > gare > ligne > département
+  (`railSous`, `src/rail.js`, est aussi lu par `src/departements.js`).
+- Géométrie : Douglas-Peucker à 12 m et coordonnées à 5 décimales (1 m) : 1,75 Mo pour 2 912 traits et 73 588 sommets.
+
+**Tester** : mêmes principes que « Tester la couche nitrates ». Pièges rencontrés : une expression `['==', 0, 1]` est lue comme un ancien filtre (« string expected ») : utiliser `['literal', false]` ;
+`queryRenderedFeatures` renvoie des objets dont `geometry` ne passe pas dans `page.evaluate` (en extraire les coordonnées dans la page) ; une position sous le panneau reçoit le clic du panneau ;
+l'interception de `main.js` par Playwright n'a pas servi ici (le module n'était pas remplacé) : servir une copie de l'application avec `window.__carte` ajouté. Polices de test : des glyphes SDF générés avec Pillow à partir de
+Liberation Sans, servis sous les noms `Noto Sans …` (voir les remarques sur le décalage vertical éventuel).
 
 ### Conventions des couches de nitrates
 
