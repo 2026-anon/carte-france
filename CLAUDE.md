@@ -309,9 +309,10 @@ Liberation Sans, servis sous les noms `Noto Sans …` (voir les remarques sur le
   236 px sous 560 px (fenêtre d'information en bandeau).
 - Couches, filtres et légende sont repliés au départ sous 600 px (`PETIT_ECRAN`, `src/nitrates.js`) ; le bandeau d'information garde son seuil de
   560 px (`src/style.css`). Fonds opaques. Sur téléphone, les blocs ouverts couvrent la moitié gauche de la carte : les replier pour toucher un point.
-- Place : à 1280×800, les trois blocs ouverts tiennent sans défilement (662 px de contenu ; marges et hauteurs de ligne resserrées pour cela, légende sur une ligne).
-  À 390×844 (486 px de place), couches ouvertes seules (233 px) ou légende ouverte seule (329 px) tiennent ; filtres ouverts, comme les trois blocs ensemble,
-  le panneau défile (rien n'est coupé : tout reste atteignable en le faisant défiler).
+- Place (mesuré avec le réseau ferré non chargé) : à 1280×800 (686 px de place), couches seules (243 px), légende seule (293 px) ou filtres seuls (422 px) tiennent ; **les trois blocs ouverts font 740 px
+  et le panneau défile de 54 px** (le groupe « Réseau ferré national » du bloc Couches a ajouté 78 px aux 662 px d'avant, qui tenaient). Avec le réseau affiché et tous les blocs ouverts : 2 132 px, il défile.
+  À 390×844 (≈ 500 px de place), couches seules (343 px) ou légende seule (329 px) tiennent ; filtres ouverts (567 px) ou les trois blocs ensemble (949 px), le panneau défile
+  (rien n'est coupé : tout reste atteignable en le faisant défiler).
 
 ### Thème clair et noms français
 

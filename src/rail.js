@@ -357,7 +357,7 @@ function activerInteraction(carte) {
       } else {
         ligne1.textContent = { N: 'Ligne suspendue (neutralisée)', R: 'Ligne suspendue, reprise programmée par un autre gestionnaire',
           A: 'Autre réseau ou exploitation touristique' }[g] || 'Ligne non exploitée (fermée)';
-        ligne2.textContent = g === 'R' || g === 'A' ? 'Classement d’après un relevé manuel (carte SNCF Réseau, mars 2026)' : '';
+        ligne2.textContent = g === 'R' || g === 'A' ? 'Relevé manuel, carte SNCF, mars 2026' : '';
       }
       // Relevé manuel : le statut des données ouvertes peut différer (ex. Montréjeau–Luchon, « exploitée » dans les données).
       ligne3.textContent = p.o ? `Données ouvertes : ${TEXTE_STATUT_OUVERT[p.o]}` : '';
