@@ -12,6 +12,9 @@ import urlMeta from '../data/rfn_meta.json?url';
 // SEULE définition des couleurs des lignes (légende officielle « Le réseau ferré en France ») : le dessin, la légende et les filtres la lisent.
 export const COULEURS = {
   lgv: '#00A0E3',
+  lgvAutre: '#00A9AC', // LGV gérée par un autre gestionnaire (relevé manuel, voir scripts/preparer_rfn.py)
+  suspendueAutre: '#00A9AC', // ligne suspendue, reprise programmée par un autre gestionnaire
+  autre: '#DC8E62', // autre réseau ou exploitation touristique
   mixte: '#5D4FA1',
   fret: '#65BC45',
   metrique: '#ED1650',
@@ -44,7 +47,7 @@ const categorieEn = (...categories) => ['in', ['get', 'c'], ['literal', categori
 const traitsVoies = categorieEn('mixte', 'fret', 'metrique', 'evit');
 
 // Couleur d'un trait exploité selon sa catégorie.
-const couleurCategorie = ['to-color', ['match', ['get', 'c'], 'lgv', COULEURS.lgv, 'mixte', COULEURS.mixte, 'fret', COULEURS.fret,
+const couleurCategorie = ['to-color', ['match', ['get', 'c'], 'lgv', COULEURS.lgv, 'lgv_autre', COULEURS.lgvAutre, 'mixte', COULEURS.mixte, 'fret', COULEURS.fret,
   'metrique', COULEURS.metrique, 'evit', COULEURS.evit, COULEURS.mixte]];
 
 // Décalage des traits parallèles : 2 traits à ±1,4 px, 3 traits à -2,7, 0 et +2,7 px (valeurs au zoom 10).
@@ -69,14 +72,26 @@ const LIGNES = [
     paint: { 'line-color': COULEURS.suspendue, 'line-width': largeur(0.6, 1, 1.5, 2.2), 'line-dasharray': [6, 3] },
   },
   {
-    id: 'rfn_lgv', // LGV : très épais, trait coloré
-    filtre: ['all', estExploitee, categorieEn('lgv')],
+    id: 'rfn_lignes_suspendues_autre', // ligne suspendue reprise par un autre gestionnaire : longs tirets, couleur de ce gestionnaire
+    filtre: ['==', ['get', 'g'], 'R'],
     layout: { 'line-cap': 'butt' },
-    paint: { 'line-color': COULEURS.lgv, 'line-width': largeur(1.8, 3, 5, 8) },
+    paint: { 'line-color': COULEURS.suspendueAutre, 'line-width': largeur(0.8, 1.3, 1.8, 2.6), 'line-dasharray': [10, 4] },
+  },
+  {
+    id: 'rfn_autre', // autre réseau ou exploitation touristique : trait fin (les petits traits sont dans rfn_autre_traits)
+    filtre: ['==', ['get', 'g'], 'A'],
+    layout: { 'line-cap': 'butt' },
+    paint: { 'line-color': COULEURS.autre, 'line-width': largeur(0.6, 1, 1.4, 2) },
+  },
+  {
+    id: 'rfn_lgv', // LGV (RFN ou autre gestionnaire) : très épais, trait coloré
+    filtre: ['all', estExploitee, categorieEn('lgv', 'lgv_autre')],
+    layout: { 'line-cap': 'butt' },
+    paint: { 'line-color': couleurCategorie, 'line-width': largeur(1.8, 3, 5, 8) },
   },
   {
     id: 'rfn_lgv_filet', // LGV : filet blanc au centre (double trait)
-    filtre: ['all', estExploitee, categorieEn('lgv')],
+    filtre: ['all', estExploitee, categorieEn('lgv', 'lgv_autre')],
     layout: { 'line-cap': 'butt' },
     paint: { 'line-color': '#ffffff', 'line-width': largeur(0.5, 0.8, 1.3, 2) },
   },
@@ -107,6 +122,9 @@ const ELECTRIFICATION = ['mixte', 'fret', 'metrique'].map((categorie) => ({
   couleur: COULEURS[categorie],
   filtre: ['all', estExploitee, categorieEn(categorie), ['==', ['get', 'e'], 1]],
 }));
+
+// Petits traits de l'« autre réseau ou exploitation touristique » : même motif que l'électrification, sur un trait fin de cette couleur.
+const TRAITS_AUTRE = { id: 'rfn_autre_traits', image: 'rfn-trait-autre', couleur: COULEURS.autre, filtre: ['==', ['get', 'g'], 'A'] };
 
 function creerImageTrait(couleur) {
   const canvas = document.createElement('canvas');
@@ -240,11 +258,14 @@ function remplirLegende(meta) {
   const lignes = creer('ul', 'rail-liste');
   lignes.append(
     ligneLegende([symboleLigne({ couleur: COULEURS.lgv, epais: true })], 'Ligne à grande vitesse'),
+    ligneLegende([symboleLigne({ couleur: COULEURS.lgvAutre, epais: true })], 'LGV gérée par un autre gestionnaire'),
     ligneLegende([1, 2, 3].map((voies) => symboleLigne({ couleur: COULEURS.mixte, voies })), 'Ligne mixte'),
     ligneLegende([1, 2, 3].map((voies) => symboleLigne({ couleur: COULEURS.fret, voies })), 'Ligne fret'),
     ligneLegende([symboleLigne({ couleur: COULEURS.metrique })], 'Voie métrique (autre réseau ou touristique)'),
     ligneLegende([symboleLigne({ couleur: COULEURS.fermee, tirets: '1.5 3' })], 'Ligne non exploitée'),
     ligneLegende([symboleLigne({ couleur: COULEURS.suspendue, tirets: '7 3' })], 'Ligne suspendue, reprise programmée ou possible'),
+    ligneLegende([symboleLigne({ couleur: COULEURS.suspendueAutre, tirets: '11 4' })], 'Ligne suspendue, reprise programmée par un autre gestionnaire'),
+    ligneLegende([symboleLigne({ couleur: COULEURS.autre, electrifie: true })], 'Autre réseau ou exploitation touristique'),
     ligneLegende([symboleLigne({ couleur: COULEURS.evit, court: true })], 'Évitement'),
   );
   const explication = creer('ul', 'rail-liste');
@@ -262,11 +283,17 @@ function remplirLegende(meta) {
   const dates = Object.values(meta.sources).map((source) => source.donnees_du).sort();
   const note = creer('p', 'legende-note',
     `Source : SNCF Réseau et SNCF Gares & Connexions (ODbL), données de ${mois(dates[0])} à ${mois(dates[dates.length - 1])} selon le jeu. `
-    + 'Non reconstitués faute de données : LGV et lignes suspendues reprises par un autre gestionnaire, autre réseau et exploitation touristique.');
+    + 'LGV d’un autre gestionnaire, lignes suspendues reprises par un autre gestionnaire, autre réseau et exploitation touristique : '
+    + 'aucun jeu ouvert ne les décrit, seuls les tronçons relevés à la main sur la carte SNCF Réseau (mars 2026) sont dessinés, '
+    + 'après vérification du code de ligne et des gares ; les autres restent classés selon le statut des données ouvertes.');
   const bloc = document.getElementById('legende-rail');
   bloc.replaceChildren(titre, creer('p', 'legende-sous-titre', 'Lignes'), lignes, explication, creer('p', 'legende-sous-titre', 'Gares'), gares, note);
   bloc.open = !window.matchMedia(PETIT_ECRAN).matches;
 }
+
+// Valeurs des cases de catégorie : `c` des lignes exploitées, plus 'inactif' (g N ou F), 'suspendue_autre' (g R) et 'autre' (g A).
+const TOUTES_CATEGORIES = ['lgv', 'lgv_autre', 'mixte', 'fret', 'metrique', 'inactif', 'suspendue_autre', 'autre'];
+const GROUPE_DE_CATEGORIE = { inactif: ['N', 'F'], suspendue_autre: ['R'], autre: ['A'] };
 
 const MARGE_TOUCHER = 10;
 const MARGE_SOURIS = 4;
@@ -292,7 +319,7 @@ export function railSous(carte, point) {
   return [];
 }
 
-const TEXTE_CATEGORIE = { lgv: 'Ligne à grande vitesse', mixte: 'Ligne mixte', fret: 'Ligne fret', metrique: 'Ligne à voie métrique', evit: 'Évitement' };
+const TEXTE_CATEGORIE = { lgv: 'Ligne à grande vitesse', lgv_autre: 'LGV gérée par un autre gestionnaire', mixte: 'Ligne mixte', fret: 'Ligne fret', metrique: 'Ligne à voie métrique', evit: 'Évitement' };
 const TEXTE_VOIES = { 1: 'voie unique', 2: 'double voie', 3: 'voies multiples' };
 const TEXTE_NIVEAU = { N: "d'intérêt national", R: "d'intérêt régional", L: "d'intérêt local" };
 
@@ -325,10 +352,11 @@ function activerInteraction(carte) {
       if (g === 'E') {
         const voies = TEXTE_VOIES[p.v];
         ligne1.textContent = `${TEXTE_CATEGORIE[p.c]}, exploitée`;
-        ligne2.textContent = p.c === 'lgv' || p.c === 'evit' ? '' : `${voies}, ${p.e ? 'électrifiée' : 'non électrifiée'}`;
+        ligne2.textContent = p.c === 'lgv' || p.c === 'lgv_autre' || p.c === 'evit' ? '' : `${voies}, ${p.e ? 'électrifiée' : 'non électrifiée'}`;
       } else {
-        ligne1.textContent = g === 'N' ? 'Ligne suspendue (neutralisée)' : 'Ligne non exploitée (fermée)';
-        ligne2.textContent = '';
+        ligne1.textContent = { N: 'Ligne suspendue (neutralisée)', R: 'Ligne suspendue, reprise programmée par un autre gestionnaire',
+          A: 'Autre réseau ou exploitation touristique' }[g] || 'Ligne non exploitée (fermée)';
+        ligne2.textContent = g === 'R' || g === 'A' ? 'Classement d’après un relevé manuel (carte SNCF Réseau, mars 2026)' : '';
       }
       ligne3.textContent = '';
     }
@@ -350,7 +378,7 @@ export function ajouterRail(carte) {
   const etat = {
     visible: { rfn_lignes: false, rfn_gares: false },
     donnees: { rfn_lignes: null, rfn_gares: null },
-    categories: new Set(['lgv', 'mixte', 'fret', 'metrique', 'inactif']),
+    categories: new Set(TOUTES_CATEGORIES),
     electrifie: new Set([0, 1]),
     voies: new Set([1, 2, 3]),
     niveaux: new Set(['N', 'R', 'L']),
@@ -368,12 +396,13 @@ export function ajouterRail(carte) {
   // Filtre des lignes : catégorie, électrification et nombre de voies s'appliquent aux lignes exploitées ; les lignes
   // non exploitées ou suspendues dépendent de la seule case « Non exploitée ou suspendue ».
   function filtreLignes() {
-    const categories = [...etat.categories].filter((c) => c !== 'inactif');
+    const categories = [...etat.categories].filter((c) => !GROUPE_DE_CATEGORIE[c]);
+    const groupes = [...etat.categories].flatMap((c) => GROUPE_DE_CATEGORIE[c] || []);
     if (etat.categories.has('mixte')) categories.push('evit');
     return ['any',
       ['all', estExploitee, ['in', ['get', 'c'], ['literal', categories]], ['in', ['get', 'e'], ['literal', [...etat.electrifie]]],
         ['in', ['get', 'v'], ['literal', [...etat.voies]]]],
-      ['all', ['!=', ['get', 'g'], 'E'], etat.categories.has('inactif')],
+      ['in', ['get', 'g'], ['literal', groupes]],
     ];
   }
 
@@ -385,7 +414,7 @@ export function ajouterRail(carte) {
   function appliquer() {
     if (carte.getLayer('rfn_lgv')) {
       const filtre = filtreLignes();
-      for (const { id, filtre: base } of [...LIGNES, ...ELECTRIFICATION]) carte.setFilter(id, ['all', base, filtre]);
+      for (const { id, filtre: base } of [...LIGNES, ...ELECTRIFICATION, TRAITS_AUTRE]) carte.setFilter(id, ['all', base, filtre]);
     }
     if (carte.getLayer('rfn_gares_reperes_N')) {
       for (const niveau of [NON_DESSERVIE, ...NIVEAUX]) {
@@ -431,7 +460,8 @@ export function ajouterRail(carte) {
         const p = f.properties;
         const garde = p.g === 'E'
           ? (p.c === 'evit' ? etat.categories.has('mixte') : etat.categories.has(p.c)) && etat.electrifie.has(p.e) && etat.voies.has(p.v)
-          : etat.categories.has('inactif');
+          : GROUPE_DE_CATEGORIE.inactif.includes(p.g) ? etat.categories.has('inactif')
+            : etat.categories.has(p.g === 'R' ? 'suspendue_autre' : 'autre');
         if (garde) affiches += f.km;
       }
       compteurLignes.textContent = `Lignes : ≈ ${arrondi(affiches)} km affichés sur ≈ ${arrondi(total)} km`;
@@ -455,10 +485,13 @@ export function ajouterRail(carte) {
       parties.push(
         groupeCases('Lignes : catégorie', [
           { valeur: 'lgv', libelle: 'Ligne à grande vitesse', symbole: symboleLigne({ couleur: COULEURS.lgv, epais: true, court: true }) },
+          { valeur: 'lgv_autre', libelle: 'LGV, autre gestionnaire', symbole: symboleLigne({ couleur: COULEURS.lgvAutre, epais: true, court: true }) },
           { valeur: 'mixte', libelle: 'Mixte', symbole: symboleLigne({ couleur: COULEURS.mixte, court: true }) },
           { valeur: 'fret', libelle: 'Fret', symbole: symboleLigne({ couleur: COULEURS.fret, court: true }) },
           { valeur: 'metrique', libelle: 'Voie métrique', symbole: symboleLigne({ couleur: COULEURS.metrique, court: true }) },
           { valeur: 'inactif', libelle: 'Non exploitée ou suspendue', symbole: symboleLigne({ couleur: COULEURS.suspendue, tirets: '4 2', court: true }) },
+          { valeur: 'suspendue_autre', libelle: 'Suspendue, autre gestionnaire', symbole: symboleLigne({ couleur: COULEURS.suspendueAutre, tirets: '6 2', court: true }) },
+          { valeur: 'autre', libelle: 'Autre réseau ou touristique', symbole: symboleLigne({ couleur: COULEURS.autre, court: true }) },
         ], etat.categories),
         groupeCases('Électrification', [{ valeur: 1, libelle: 'Électrifiée' }, { valeur: 0, libelle: 'Non électrifiée' }], etat.electrifie),
         groupeCases('Nombre de voies', [{ valeur: 1, libelle: 'Voie unique' }, { valeur: 2, libelle: 'Double voie' }, { valeur: 3, libelle: 'Voies multiples' }], etat.voies),
@@ -476,7 +509,7 @@ export function ajouterRail(carte) {
     const reinitialiser = creer('button', 'filtres-reinit', 'Réinitialiser');
     reinitialiser.type = 'button';
     reinitialiser.addEventListener('click', () => {
-      etat.categories = new Set(['lgv', 'mixte', 'fret', 'metrique', 'inactif']);
+      etat.categories = new Set(TOUTES_CATEGORIES);
       etat.electrifie = new Set([0, 1]);
       etat.voies = new Set([1, 2, 3]);
       etat.niveaux = new Set(['N', 'R', 'L']);
@@ -496,11 +529,11 @@ export function ajouterRail(carte) {
   function ajouterLignes() {
     const config = SOUS_COUCHES_RAIL[0];
     carte.addSource(config.id, { type: 'geojson', data: etat.donnees.rfn_lignes, attribution: config.attribution });
-    for (const { id, image, couleur } of ELECTRIFICATION) carte.addImage(image, creerImageTrait(couleur), { pixelRatio: 2 });
+    for (const { image, couleur } of [...ELECTRIFICATION, TRAITS_AUTRE]) carte.addImage(image, creerImageTrait(couleur), { pixelRatio: 2 });
     for (const { id, filtre, layout, paint } of LIGNES) {
       carte.addLayer({ id, type: 'line', source: config.id, filter: filtre, layout, paint }, sousLesPoints());
     }
-    for (const { id, image, filtre } of ELECTRIFICATION) {
+    for (const { id, image, filtre } of [...ELECTRIFICATION, TRAITS_AUTRE]) {
       carte.addLayer({
         id, type: 'line', source: config.id, minzoom: 7, filter: filtre,
         paint: { 'line-pattern': image, 'line-width': ['interpolate', ['linear'], ['zoom'], 7, 4, 10, 6, 14, 9] },

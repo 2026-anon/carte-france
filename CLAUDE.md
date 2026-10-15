@@ -213,9 +213,15 @@ enregistrements « électrifiées » et « LGV » n'ont pas de PK : les PK ne se
   sinon `frequentation-gares` (143), sinon local par défaut (50, signalé dans la fenêtre) ; les gares ni voyageurs ni fret (2 647) ne sont pas représentées.
 
 **Écarts avec la légende officielle** (mars 2026) :
-- *Non reconstituables, aucune donnée* : « LGV gérée par un autre gestionnaire » (#00A9AC), « ligne suspendue, reprise par un autre gestionnaire » (#00A9AC, longs tirets), « autre réseau ou exploitation
-  touristique » (#DC8E62). Les jeux ouverts ne décrivent que le RFN et n'ont aucun champ gestionnaire ou exploitant ; ces trois catégories ne sont donc pas dessinées (la légende le dit). Les LGV de ces
-  gestionnaires sont dessinées en bleu LGV ordinaire.
+- *Relevé manuel (trois catégories sans donnée ouverte)* : « LGV gérée par un autre gestionnaire » (#00A9AC, dessinée comme une LGV), « ligne suspendue, reprise programmée par un autre gestionnaire » (#00A9AC, longs tirets)
+  et « autre réseau ou exploitation touristique » (#DC8E62, trait fin à petits traits). Les jeux ouverts n'ont aucun champ gestionnaire ou exploitant : ces tronçons viennent d'un **relevé manuel sur la carte SNCF Réseau
+  (mars 2026)**, la table `RELEVE_MANUEL` de `scripts/preparer_rfn.py` (catégorie cible, code de ligne relevé, gares relevées). **Règle : un segment n'est reclassé que si le code de ligne ET les gares correspondent ; jamais par
+  simple proximité.** Concrètement : code = préfixe du `code_ligne` du segment (sans code relevé, les codes portés par les gares relevées) ; au moins `min_gares` gares relevées (nom sans accents, « Saint/St » unifiés) à moins de
+  1 km du tracé ; longueur du segment ≤ 1,6 × l'écart entre ses gares relevées + 3 km (une gare relevée à moins de 2,5 km compte comme borne). Le statut du jeu ouvert est alors remplacé (les segments déclassés `DEC V` reclassés
+  sont donc dessinés). Ce qui ne correspond pas **reste classé selon les données ouvertes** ; le bilan par entrée (segments reclassés avec km, candidats refusés) est dans `rfn_meta.json`, clé `releve_manuel`.
+  La LGV 837000 (Perpignan–frontière) est absente du fichier de formes : son tracé vient du jeu `lignes-lgv-et-par-ecartement` (`LGV_AUTRE_AJOUTEE`), sous la même vérification des gares.
+  Valeurs de `g` dans `rfn_lignes.geojson` : `E`, `N`, `F` (comme `STATUTS`), plus `R` (suspendue reprise par un autre gestionnaire) et `A` (autre réseau ou touristique) ; `c` vaut en plus `lgv_autre`. Résultat et
+  entrées non appariées (à compléter par un relevé plus précis ou des codes confirmés) : voir le rapport de la PR.
 - *Approximations* : **mixte / fret** (aucun jeu ne donne l'usage : « fret » = tronçon exploité sans gare voyageurs, soit 1 434 km sur 27 220 km exploités) ; **voie métrique** (#ED1650) = lignes à voie étroite du RFN
   (5 lignes, 164 km), qui ne séparent pas « autre réseau » de « touristique » ; **évitements** = voies nommées `EVIT` du jeu des voies (194), dont 43 % sont à plus de 100 m de la ligne dessinée de même code (positions du jeu) ;
   **nombre de voies** (méthode ci-dessus) ; **national / régional / local** (les jeux ouverts parlent de « segment DRG » A/B/C sans le définir ; la correspondance est l'usage courant) ; **gare desservie** = drapeau
@@ -232,7 +238,7 @@ enregistrements « électrifiées » et « LGV » n'ont pas de PK : les PK ne se
   tirets de la légende par `line-dasharray`, traits d'électrification par `line-pattern` (une image par couleur créée au chargement). Les noms de gares sont uniquement en `Noto Sans Regular/Bold/Italic`,
   les polices du style OpenFreeMap (non vérifié sur le vrai serveur de polices, inaccessible depuis l'environnement de développement).
 - Affichage progressif : national dès le zoom 4,5, régional 7, local et non desservies 9,5 ; en cas de collision, l'étiquette de la couche la plus haute (nationales) passe d'abord.
-- Filtres (bloc « Filtres du réseau ferré », visible quand une sous-couche l'est) : lignes par catégorie (LGV, mixte, fret, voie métrique, non exploitée ou suspendue), électrification, nombre de voies ; gares par niveau et
+- Filtres (bloc « Filtres du réseau ferré », visible quand une sous-couche l'est) : lignes par catégorie (LGV, LGV autre gestionnaire, mixte, fret, voie métrique, non exploitée ou suspendue, suspendue autre gestionnaire, autre réseau ou touristique), électrification, nombre de voies ; gares par niveau et
   par desserte voyageurs. Ils s'appliquent par `setFilter` sur les couches existantes (`['all', filtre de base, filtre utilisateur]`). Un compteur donne les kilomètres de lignes (≈ : tracé simplifié, 0,7 % plus court)
   et le nombre de gares (avant l'effet du zoom).
 - Clic ou toucher : une gare (marge 4 px à la souris, 10 px au doigt) puis une ligne ouvrent une fenêtre (`.fenetre-station`, type « Réseau ferré national »). Priorité : station de nitrates > gare > ligne > département

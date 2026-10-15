@@ -28,7 +28,9 @@ Les gares ni voyageurs ni fret ne sont pas représentées.
 import argparse
 import json
 import math
+import re
 import sys
+import unicodedata
 import time
 import urllib.request
 from collections import Counter, defaultdict
@@ -62,6 +64,54 @@ CATEGORIE_LGV = 'Ligne à grande vitesse'
 CATEGORIE_ETROITE = 'Ligne du réseau conventionnel à voie étroite'
 INTERET = {'A': 'N', 'B': 'R', 'C': 'L'}  # segment DRG → national, régional, local
 ORDRE_SEGMENT = ('A', 'B', 'C')  # du plus important au moins important
+
+# Relevé manuel sur la carte SNCF Réseau « Le réseau ferré en France » (mars 2026) : trois catégories de la légende qu'aucun
+# jeu ouvert ne décrit (ni gestionnaire ni exploitant). Chaque entrée donne la catégorie cible, le code de ligne relevé
+# (préfixe de `code_ligne`, ou None quand le relevé n'en donne pas) et les gares relevées.
+# RÈGLE : un segment n'est reclassé que si le code de ligne ET les gares correspondent. Jamais par simple proximité.
+#   - code de ligne : préfixe du `code_ligne` du segment (sans code relevé : codes portés par les gares relevées) ;
+#   - gares : au moins `min_gares` gares relevées (nom, accents et « Saint/St » ignorés) à moins de GARE_MAX_M du tracé du segment ;
+#   - le segment ne dépasse pas 1,6 × l'écart entre ses gares relevées les plus éloignées + 3 km (sinon il déborde du secteur relevé) ;
+#     pour cet écart, une gare relevée à moins de EXTREMITE_MAX_M du tracé (bout de ligne) compte comme borne, sans compter dans les `min_gares`.
+# Les entrées sans correspondance ne sont pas reclassées ; elles sont listées dans le bilan (`rfn_meta.json`).
+# cible : 'lgv_autre' (LGV d'un autre gestionnaire, dessinée comme une LGV), 'suspendue_autre' (suspendue, reprise
+# programmée par un autre gestionnaire), 'autre' (autre réseau ou exploitation touristique). Le statut du jeu ouvert est remplacé.
+SOURCE_RELEVE = 'relevé manuel sur la carte SNCF Réseau « Le réseau ferré en France », mars 2026'
+GARE_MAX_M = 1000.0
+EXTREMITE_MAX_M = 2500.0
+RELEVE_MANUEL = [
+    {'nom': 'LGV Sud Europe Atlantique (Tours–Bordeaux)', 'cible': 'lgv_autre', 'code': '566',
+     'gares': ['Noyant', 'Maillé', 'Clérac', 'Bussac', 'Montendre'], 'min_gares': 2, 'longue': True},
+    {'nom': 'Montréjeau–Luchon', 'cible': 'suspendue_autre', 'code': None,
+     'gares': ['Gourdan-Polignan', 'Avezac', 'Labarthe-Inard', 'Luchon'], 'min_gares': 2},
+    {'nom': 'Vézelise–Mirecourt', 'cible': 'suspendue_autre', 'code': None,
+     'gares': ['Xeuilley', 'Vézelise', 'Tantonville', 'Praye-sous-Vaudémont', 'Diarville', 'Hymont-Mattaincourt', 'Mirecourt'], 'min_gares': 2},
+    {'nom': 'Cholet–Les Herbiers', 'cible': 'autre', 'code': '526', 'gares': ['Torfou', 'Brouzils'], 'min_gares': 2},
+    {'nom': 'Secteur de Saint-Lô', 'cible': 'autre', 'code': '414', 'gares': ['Condé-sur-Vire', 'Pont-Hébert', 'Marigny'], 'min_gares': 2},
+    {'nom': 'Le Havre', 'cible': 'autre', 'code': '341', 'gares': ['Harfleur', 'Saint-Laurent', 'Étainhus'], 'min_gares': 2},
+    {'nom': 'Rivesaltes–Estagel–Saint-Paul-de-Fenouillet', 'cible': 'autre', 'code': '676',
+     'gares': ['Rivesaltes', 'Estagel', 'Saint-Paul-de-Fenouillet'], 'min_gares': 2},
+    {'nom': 'Béziers (Colombiers, Cazouls, Nissan)', 'cible': 'autre', 'code': '640', 'gares': ['Colombiers', 'Cazouls', 'Nissan'], 'min_gares': 2},
+    {'nom': 'Saint-Quentin–Montescourt–Essigny-le-Petit', 'cible': 'autre', 'code': '242',
+     'gares': ['Saint-Quentin', 'Montescourt', 'Essigny-le-Petit'], 'min_gares': 2},
+    {'nom': 'Secteur d\'Ambert', 'cible': 'autre', 'code': '785', 'gares': ['Ambert'], 'min_gares': 1},
+    {'nom': 'Veauche–Bonson–Bouthéon', 'cible': 'autre', 'code': '578', 'gares': ['Veauche', 'Bonson', 'Bouthéon'], 'min_gares': 2},
+    {'nom': 'Veauche–Bonson–Bouthéon (lu aussi 782)', 'cible': 'autre', 'code': '782', 'gares': ['Veauche', 'Bonson', 'Bouthéon'], 'min_gares': 2},
+    {'nom': 'Rethel–Amagne-Lucquy–Attigny', 'cible': 'autre', 'code': '210', 'gares': ['Rethel', 'Amagne', 'Attigny'], 'min_gares': 2},
+    {'nom': 'Secteur de Bordeaux (position inconnue)', 'cible': 'autre', 'code': '583', 'gares': ['Bordeaux'], 'min_gares': 2},
+    {'nom': 'Port de Dunkerque', 'cible': 'autre', 'code': None, 'gares': ['Maritime-Mardyck', 'Port-Ouest', 'Port-Est'], 'min_gares': 2},
+    {'nom': 'Calais–Fréthun', 'cible': 'autre', 'code': None, 'gares': ['Calais', 'Fréthun'], 'min_gares': 2},
+    {'nom': 'Royan–Saujon–Gémozac', 'cible': 'autre', 'code': None, 'gares': ['Royan', 'Saujon', 'Gémozac'], 'min_gares': 2},
+    {'nom': 'Bort-les-Orgues–Lugarde-Marchastel', 'cible': 'autre', 'code': None, 'gares': ['Bort-les-Orgues', 'Lugarde'], 'min_gares': 2},
+    {'nom': 'Leyment–Lagnieu', 'cible': 'autre', 'code': None, 'gares': ['Leyment', 'Lagnieu'], 'min_gares': 2},
+    {'nom': 'Brassac-les-Mines–Sainte-Florine–Paulhaguet', 'cible': 'autre', 'code': None,
+     'gares': ['Brassac-les-Mines', 'Sainte-Florine', 'Paulhaguet'], 'min_gares': 2},
+    {'nom': 'Médoc (Margaux, Listrac)', 'cible': 'autre', 'code': None, 'gares': ['Margaux', 'Listrac'], 'min_gares': 2},
+]
+# LGV absente du fichier de formes (jeu « Lignes LGV et par écartement » seulement) : Perpignan → frontière, d'un autre gestionnaire.
+# Le code 837000 est celui du jeu ; les gares (Le Soler à 1,7 km, Le Boulou-Perthus à 2,4 km) sont sur la ligne classique voisine, d'où la
+# tolérance EXTREMITE_MAX_M au lieu de GARE_MAX_M : correspondance plus lâche que les autres, signalée dans le rapport.
+LGV_AUTRE_AJOUTEE = {'nom': 'LGV Perpignan–frontière', 'code': '837000', 'gares': ['Le Soler', 'Boulou', 'Perthus'], 'min_gares': 2}
 
 KX, KY = 76630.0, 111190.0  # mètres par degré de longitude et de latitude (équirectangulaire autour de 46,5° N)
 TOLERANCE_VOIE_M = 15.0  # distance maximale d'une voie à l'arête pour être comptée
@@ -296,7 +346,80 @@ def construire_gares(brut, bilan):
     return gares
 
 
-def construire_lignes(brut, bilan):
+def nom_normalise(texte):
+    """Nom de gare sans accents ni ponctuation, « Saint/Sainte » abrégés comme dans le jeu des gares."""
+    t = unicodedata.normalize('NFD', texte or '').encode('ascii', 'ignore').decode().lower()
+    t = re.sub(r'[^a-z0-9]+', ' ', t).strip()
+    return re.sub(r'\bsainte\b', 'ste', re.sub(r'\bsaint\b', 'st', t))
+
+
+def distance_polyligne_m(point, coords):
+    px, py = metres(point)
+    meilleure = float('inf')
+    for a, b in zip(coords, coords[1:]):
+        ax, ay = metres(a)
+        dx, dy = metres(b)[0] - ax, metres(b)[1] - ay
+        carre = dx * dx + dy * dy
+        t = 0.0 if carre == 0 else max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / carre))
+        meilleure = min(meilleure, math.hypot(px - ax - t * dx, py - ay - t * dy))
+    return meilleure
+
+
+def km_polyligne(coords):
+    return sum(math.hypot(*(a - b for a, b in zip(metres(c1), metres(c0)))) for c0, c1 in zip(coords, coords[1:])) / 1000
+
+
+def gares_nommees(gares, nom_norm):
+    """Gares dont le libellé normalisé est ce nom ou le contient comme suite de mots entiers."""
+    return [(c, pos) for libelle, c, pos in gares if (' ' + nom_norm + ' ') in (' ' + libelle + ' ')]
+
+
+def rapprocher_releve(formes, gares_brutes):
+    """Applique RELEVE_MANUEL : renvoie ({indice du segment dans `formes` → cible}, rapport par entrée)."""
+    gares = [(nom_normalise(g['properties']['libelle']), g['properties']['code_ligne'], g['geometry']['coordinates'])
+             for g in gares_brutes if g['geometry']]
+    reclasses, rapport = {}, []
+    for entree in RELEVE_MANUEL:
+        noms = [(n, nom_normalise(n)) for n in entree['gares']]
+        trouvees = {n: gares_nommees(gares, nn) for n, nn in noms}  # nom relevé → [(code_ligne de la gare, position)]
+        if entree['code']:
+            codes = None
+        else:  # sans code relevé : les codes portés par les gares relevées
+            codes = {c for v in trouvees.values() for c, _ in v}
+        retenus, candidats = [], []
+        for i, f in enumerate(formes):
+            p, coords = f['properties'], f['geometry']['coordinates']
+            if p['mnemo'] == 'VS' or len(coords) < 2 or i in reclasses:
+                continue
+            if entree['code'] is not None:
+                if not p['code_ligne'].startswith(entree['code']):
+                    continue
+            elif p['code_ligne'] not in codes:
+                continue
+            proches = {n: [pos for _, pos in v if distance_polyligne_m(pos, coords) <= GARE_MAX_M] for n, v in trouvees.items()}
+            proches = {n: v for n, v in proches.items() if v}
+            lg = km_polyligne(coords)
+            bornes = [pos for v in trouvees.values() for _, pos in v if distance_polyligne_m(pos, coords) <= EXTREMITE_MAX_M] if proches else []
+            ecart = max([math.hypot(*(a - b for a, b in zip(metres(x), metres(y)))) / 1000 for x in bornes for y in bornes] or [0])
+            candidats.append((p['code_ligne'], p['mnemo'], round(lg, 1), sorted(proches)))
+            if len(proches) < entree['min_gares']:
+                continue
+            if len(proches) >= 2 and lg > 1.6 * ecart + 3 and not entree.get('longue'):
+                continue
+            retenus.append(i)
+            reclasses[i] = entree['cible']
+        rapport.append({'entree': entree['nom'], 'cible': entree['cible'], 'code_releve': entree['code'],
+                        'reclasses': [{'code_ligne': formes[i]['properties']['code_ligne'], 'statut_jeu_ouvert': formes[i]['properties']['mnemo'],
+                                       'km': round(km_polyligne(formes[i]['geometry']['coordinates']), 1),
+                                       'gares': sorted(n for n, v in trouvees.items() if any(
+                                           distance_polyligne_m(pos, formes[i]['geometry']['coordinates']) <= GARE_MAX_M for _, pos in v))}
+                                      for i in retenus],
+                        'non_retenus': [c for c in candidats if c[3] and not any(
+                            c[0] == formes[i]['properties']['code_ligne'] and c[2] == round(km_polyligne(formes[i]['geometry']['coordinates']), 1) for i in retenus)]})
+    return reclasses, rapport
+
+
+def construire_lignes(brut, bilan, bilan_releve):
     formes = charger(brut, 'formes-des-lignes-du-rfn')
     electrifie = sommets_par_ligne(charger(brut, 'liste-des-lignes-electrifiees'), 'elect')
     categorie = sommets_par_ligne(charger(brut, 'lignes-lgv-et-par-ecartement'), 'catlig')
@@ -318,10 +441,16 @@ def construire_lignes(brut, bilan):
     avec_voyageurs = {(g['properties']['code_ligne'], g['properties']['rg_troncon'])
                       for g in charger(brut, 'liste-des-gares') if g['properties']['voyageurs'] == 'O'}
 
+    reclasses, rapport = rapprocher_releve(formes, charger(brut, 'liste-des-gares'))
+    bilan_releve.extend(rapport)
+
     traits = []
-    for f in formes:
+    for indice, f in enumerate(formes):
         p = f['properties']
-        statut = STATUTS.get(p['mnemo'])
+        cible = reclasses.get(indice)
+        statut = {'suspendue_autre': 'R', 'autre': 'A'}.get(cible) or STATUTS.get(p['mnemo'])
+        if cible:
+            bilan['km reclassés par le relevé manuel, ' + cible] += km_polyligne(f['geometry']['coordinates'])
         if statut is None:
             bilan['segments écartés (statut ' + p['mnemo'] + ')'] += 1
             continue
@@ -332,7 +461,7 @@ def construire_lignes(brut, bilan):
         m = [metres(c) for c in coords]
         longueurs = [math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(m, m[1:])]
         if statut != 'E':
-            # Lignes non exploitées ou suspendues : un seul style, sans voies ni électrification.
+            # Lignes non exploitées, suspendues, ou reclassées par le relevé (R, A) : un seul style, sans voies ni électrification.
             attributs = [(statut, '', 0, 0)] * len(longueurs)
         else:
             usage = 'mixte' if (code, rang) in avec_voyageurs else 'fret'
@@ -343,7 +472,9 @@ def construire_lignes(brut, bilan):
                 ka, kb = cle(a), cle(b)
                 ev, cv, rg = electrifie.get(code, {}), categorie.get(code, {}), regime.get(code, {})
                 cats = (cv.get(ka, set()) & cv.get(kb, set())) or cv.get(ka, set()) or cv.get(kb, set())
-                if CATEGORIE_LGV in cats:
+                if cible == 'lgv_autre':
+                    cat = 'lgv_autre'
+                elif CATEGORIE_LGV in cats:
                     cat = 'lgv'
                 elif CATEGORIE_ETROITE in cats:
                     cat = 'metrique'
@@ -377,6 +508,31 @@ def construire_lignes(brut, bilan):
                 traits.append({'type': 'Feature', 'geometry': {'type': 'LineString', 'coordinates': geometrie_simplifiee(morceau)},
                                'properties': props})
                 debut = i
+    # LGV d'un autre gestionnaire absente du fichier de formes : tracé du jeu « Lignes LGV et par écartement », si les gares relevées
+    # sont bien le long du tracé (même règle que RELEVE_MANUEL).
+    ajout = LGV_AUTRE_AJOUTEE
+    gares_brutes = charger(brut, 'liste-des-gares')
+    morceaux = [f for f in charger(brut, 'lignes-lgv-et-par-ecartement') if f['properties']['code_ligne'] == ajout['code'] and f['geometry']]
+    # Le jeu répète le tracé (un enregistrement sans PK en double) : un seul exemplaire de chaque tracé.
+    morceaux = list({json.dumps(m['geometry']['coordinates']): m for m in morceaux}.values())
+    noms = {n: nom_normalise(n) for n in ajout['gares']}
+    gares_norm = [(nom_normalise(g['properties']['libelle']), g['properties']['code_ligne'], g['geometry']['coordinates'])
+                  for g in gares_brutes if g['geometry']]
+    proches = {n for n, nn in noms.items() for _, pos in gares_nommees(gares_norm, nn)
+               if any(distance_polyligne_m(pos, m['geometry']['coordinates']) <= EXTREMITE_MAX_M for m in morceaux)}
+    km_ajoutes = 0.0
+    if len(proches) >= ajout['min_gares']:
+        ev = electrifie.get(ajout['code'], {})
+        for m in morceaux:
+            coords = m['geometry']['coordinates']
+            km_ajoutes += km_polyligne(coords)
+            elec = int(all(cle(c) in ev for c in coords))
+            traits.append({'type': 'Feature', 'geometry': {'type': 'LineString', 'coordinates': geometrie_simplifiee(coords)},
+                           'properties': {'g': 'E', 'c': 'lgv_autre', 'v': 2, 'e': elec, 'l': ajout['code']}})
+        bilan['km reclassés par le relevé manuel, lgv_autre'] += km_ajoutes
+    bilan_releve.append({'entree': ajout['nom'], 'cible': 'lgv_autre', 'code_releve': ajout['code'],
+                         'reclasses': [{'code_ligne': ajout['code'], 'statut_jeu_ouvert': 'absent du fichier de formes (jeu LGV)',
+                                        'km': round(km_ajoutes, 1), 'gares': sorted(proches)}] if km_ajoutes else [], 'non_retenus': []})
     # Évitements : voies nommées EVIT du jeu des voies (lignes exploitées uniquement).
     for f in evitements:
         for ligne in (f['geometry']['coordinates'] if f['geometry']['type'] == 'MultiLineString' else [f['geometry']['coordinates']]):
@@ -402,7 +558,8 @@ def main():
     meta = telecharger(args.brut, args.telecharger)
     bilan = Counter()
     gares = construire_gares(args.brut, bilan)
-    traits = construire_lignes(args.brut, bilan)
+    rapport_releve = []
+    traits = construire_lignes(args.brut, bilan, rapport_releve)
     ecrire_geojson(SORTIE / 'rfn_lignes.geojson', traits)
     ecrire_geojson(SORTIE / 'rfn_gares.geojson', gares)
     sortie = {
@@ -411,6 +568,7 @@ def main():
         'parametres': {'tolerance_voie_m': TOLERANCE_VOIE_M, 'longueur_min_voies_m': LONGUEUR_MIN_VOIES_M,
                        'simplification_m': SIMPLIFICATION_M, 'decimales': DECIMALES},
         'statuts': STATUTS,
+        'releve_manuel': {'source': SOURCE_RELEVE, 'gare_max_m': GARE_MAX_M, 'entrees': rapport_releve},
         'bilan': {k: round(v, 1) if isinstance(v, float) else v for k, v in sorted(bilan.items())},
     }
     (SORTIE / 'rfn_meta.json').write_text(json.dumps(sortie, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
