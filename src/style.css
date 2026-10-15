@@ -338,3 +338,55 @@ body {
     max-height: calc(100% - var(--bas) - 236px);
   }
 }
+
+/* Réseau ferré national (src/rail.js) : légende des lignes et des gares. */
+.rail-liste {
+  margin: 0 0 4px;
+  padding: 0;
+  list-style: none;
+}
+
+.rail-legende-ligne {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 1px 0;
+}
+
+.rail-symboles {
+  display: flex;
+  flex: none;
+  gap: 2px;
+}
+
+.rail-symbole {
+  flex: none;
+  display: block;
+}
+
+/* Gares : le nom reprend le style de l'étiquette de la carte (taille, graisse, casse, couleur). */
+.rail-gare {
+  display: inline-block;
+  min-width: 2.4em;
+}
+
+.rail-gare-N {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.rail-gare-R {
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.rail-gare-L {
+  font-size: 0.75rem;
+}
+
+.rail-gare-x {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: #5d4fa1;
+}
