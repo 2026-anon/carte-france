@@ -320,6 +320,7 @@ export function railSous(carte, point) {
 }
 
 const TEXTE_CATEGORIE = { lgv: 'Ligne à grande vitesse', lgv_autre: 'LGV gérée par un autre gestionnaire', mixte: 'Ligne mixte', fret: 'Ligne fret', metrique: 'Ligne à voie métrique', evit: 'Évitement' };
+const TEXTE_STATUT_OUVERT = { E: 'exploitée', N: 'suspendue', F: 'non exploitée (fermée)', D: 'déclassée' };
 const TEXTE_VOIES = { 1: 'voie unique', 2: 'double voie', 3: 'voies multiples' };
 const TEXTE_NIVEAU = { N: "d'intérêt national", R: "d'intérêt régional", L: "d'intérêt local" };
 
@@ -358,7 +359,8 @@ function activerInteraction(carte) {
           A: 'Autre réseau ou exploitation touristique' }[g] || 'Ligne non exploitée (fermée)';
         ligne2.textContent = g === 'R' || g === 'A' ? 'Classement d’après un relevé manuel (carte SNCF Réseau, mars 2026)' : '';
       }
-      ligne3.textContent = '';
+      // Relevé manuel : le statut des données ouvertes peut différer (ex. Montréjeau–Luchon, « exploitée » dans les données).
+      ligne3.textContent = p.o ? `Données ouvertes : ${TEXTE_STATUT_OUVERT[p.o]}` : '';
     }
     for (const l of [ligne1, ligne2, ligne3]) l.hidden = l.textContent === '';
     fenetre.setLngLat(e.lngLat);

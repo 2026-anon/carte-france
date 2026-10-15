@@ -220,6 +220,11 @@ enregistrements « électrifiées » et « LGV » n'ont pas de PK : les PK ne se
   1 km du tracé ; longueur du segment ≤ 1,6 × l'écart entre ses gares relevées + 3 km (une gare relevée à moins de 2,5 km compte comme borne). Le statut du jeu ouvert est alors remplacé (les segments déclassés `DEC V` reclassés
   sont donc dessinés). Ce qui ne correspond pas **reste classé selon les données ouvertes** ; le bilan par entrée (segments reclassés avec km, candidats refusés) est dans `rfn_meta.json`, clé `releve_manuel`.
   La LGV 837000 (Perpignan–frontière) est absente du fichier de formes : son tracé vient du jeu `lignes-lgv-et-par-ecartement` (`LGV_AUTRE_AJOUTEE`), sous la même vérification des gares.
+  Deux cas particuliers, écrits en commentaire dans `RELEVE_MANUEL` : Royan–Saujon–Gémozac (546000) est **découpé** (`zone` : seules les arêtes dont le milieu est à moins de 8 km de 45,57 N / −0,75 E sont reclassées, 15,9 km
+  sur 26,6) ; Cholet–Les Herbiers (526000, déclassée) passe par une **règle alternative** propre à cette entrée (code exact, milieu du segment à moins de 8 km de 46,9 N / −0,95 E, longueur de 0,6 à 1,6 fois 20 km, aucune gare
+  relevée portée par ce code ; le segment porte pourtant d'autres gares, dont Les Herbiers), car Torfou et Les Brouzils sont sur d'autres codes.
+  **Écarts de statut** : les segments reclassés `R` et `A` portent `o`, le statut des données ouvertes (`E`, `N`, `F`, `D` déclassée), affiché dans la fenêtre (« Données ouvertes : … »). Montréjeau–Luchon (668000) est
+  reclassé « suspendue, reprise par un autre gestionnaire » d'après le PDF SNCF de mars 2026 alors que **les données ouvertes la donnent « exploitée »** ; Dunkerque (302506) est dans le même cas.
   Valeurs de `g` dans `rfn_lignes.geojson` : `E`, `N`, `F` (comme `STATUTS`), plus `R` (suspendue reprise par un autre gestionnaire) et `A` (autre réseau ou touristique) ; `c` vaut en plus `lgv_autre`. Résultat et
   entrées non appariées (à compléter par un relevé plus précis ou des codes confirmés) : voir le rapport de la PR.
 - *Approximations* : **mixte / fret** (aucun jeu ne donne l'usage : « fret » = tronçon exploité sans gare voyageurs, soit 1 434 km sur 27 220 km exploités) ; **voie métrique** (#ED1650) = lignes à voie étroite du RFN

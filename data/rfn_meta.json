@@ -88,6 +88,7 @@
       "code_ligne": "566000",
       "statut_jeu_ouvert": "EXPLOITE",
       "km": 300.8,
+      "segment_km": 300.8,
       "gares": [
        "Clérac",
        "Maillé"
@@ -105,6 +106,7 @@
       "code_ligne": "668000",
       "statut_jeu_ouvert": "EXPLOITE",
       "km": 35.0,
+      "segment_km": 35.0,
       "gares": [
        "Gourdan-Polignan",
        "Luchon"
@@ -148,6 +150,7 @@
       "code_ligne": "040000",
       "statut_jeu_ouvert": "DEC V",
       "km": 37.8,
+      "segment_km": 37.8,
       "gares": [
        "Diarville",
        "Mirecourt",
@@ -160,6 +163,7 @@
       "code_ligne": "030000",
       "statut_jeu_ouvert": "DEC V",
       "km": 4.3,
+      "segment_km": 4.3,
       "gares": [
        "Hymont-Mattaincourt",
        "Mirecourt"
@@ -205,7 +209,15 @@
     "entree": "Cholet–Les Herbiers",
     "cible": "autre",
     "code_releve": "526",
-    "reclasses": [],
+    "reclasses": [
+     {
+      "code_ligne": "526000",
+      "statut_jeu_ouvert": "DEC V",
+      "km": 25.6,
+      "segment_km": 25.6,
+      "gares": []
+     }
+    ],
     "non_retenus": []
    },
    {
@@ -257,6 +269,7 @@
       "code_ligne": "676000",
       "statut_jeu_ouvert": "FERME DT",
       "km": 42.1,
+      "segment_km": 42.1,
       "gares": [
        "Estagel",
        "Rivesaltes",
@@ -284,6 +297,7 @@
       "code_ligne": "640100",
       "statut_jeu_ouvert": "DEC V",
       "km": 9.3,
+      "segment_km": 9.3,
       "gares": [
        "Cazouls",
        "Colombiers"
@@ -345,6 +359,7 @@
       "code_ligne": "785000",
       "statut_jeu_ouvert": "DEC V",
       "km": 48.1,
+      "segment_km": 48.1,
       "gares": [
        "Ambert"
       ]
@@ -399,6 +414,7 @@
       "code_ligne": "302506",
       "statut_jeu_ouvert": "EXPLOITE",
       "km": 6.6,
+      "segment_km": 6.6,
       "gares": [
        "Maritime-Mardyck",
        "Port-Est"
@@ -474,7 +490,8 @@
      {
       "code_ligne": "546000",
       "statut_jeu_ouvert": "FERME",
-      "km": 26.6,
+      "km": 15.9,
+      "segment_km": 26.6,
       "gares": [
        "Gémozac",
        "Saujon"
@@ -617,7 +634,7 @@
   "gares : non desservie voyageurs (fret), sans niveau": 469,
   "gares ignorées : ni voyageurs ni fret": 2647,
   "gares écrites": 3419,
-  "km reclassés par le relevé manuel, autre": 132.7,
+  "km reclassés par le relevé manuel, autre": 147.6,
   "km reclassés par le relevé manuel, lgv_autre": 325.4,
   "km reclassés par le relevé manuel, suspendue_autre": 77.1,
   "longueur km, exploitée, catégorie fret": 1427.3,
@@ -630,16 +647,16 @@
   "longueur km, exploitée, voies 2": 15748.4,
   "longueur km, exploitée, voies 3": 1200.7,
   "longueur km, exploitée, électrifiée": 16762.4,
-  "longueur km, statut A": 132.7,
+  "longueur km, statut A": 147.6,
   "longueur km, statut E": 27178.7,
-  "longueur km, statut F": 2571.3,
+  "longueur km, statut F": 2582.1,
   "longueur km, statut N": 2899.9,
   "longueur km, statut R": 77.1,
   "segments écartés (statut DEC NV)": 64,
-  "segments écartés (statut DEC V)": 132,
+  "segments écartés (statut DEC V)": 131,
   "segments écartés (statut RETRANCHE)": 28,
   "segments écartés (statut VS)": 132,
-  "traits de lignes écrits": 2916,
+  "traits de lignes écrits": 2918,
   "évitements (EVIT)": 194
  }
 }

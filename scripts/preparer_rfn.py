@@ -86,7 +86,12 @@ RELEVE_MANUEL = [
      'gares': ['Gourdan-Polignan', 'Avezac', 'Labarthe-Inard', 'Luchon'], 'min_gares': 2},
     {'nom': 'Vézelise–Mirecourt', 'cible': 'suspendue_autre', 'code': None,
      'gares': ['Xeuilley', 'Vézelise', 'Tantonville', 'Praye-sous-Vaudémont', 'Diarville', 'Hymont-Mattaincourt', 'Mirecourt'], 'min_gares': 2},
-    {'nom': 'Cholet–Les Herbiers', 'cible': 'autre', 'code': '526', 'gares': ['Torfou', 'Brouzils'], 'min_gares': 2},
+    # RÈGLE ALTERNATIVE `declassee_sans_gares` (cette entrée seulement, ne pas l'étendre aux autres) : la ligne est déclassée (DEC V,
+    # DEC NV) et aucune des gares relevées n'est portée par son code dans le jeu des gares (Torfou et Les Brouzils sont sur d'autres
+    # codes ; le segment porte d'autres gares, dont Les Herbiers) : le critère des gares ne peut pas s'appliquer. On accepte alors le segment si
+    # code de ligne exact + milieu du segment à moins de `rayon_km` du point relevé + longueur entre 0,6 et 1,6 fois `longueur_km`.
+    {'nom': 'Cholet–Les Herbiers', 'cible': 'autre', 'code': '526', 'gares': ['Torfou', 'Brouzils'], 'min_gares': 2,
+     'regle': 'declassee_sans_gares', 'code_exact': '526000', 'centre': (46.9, -0.95), 'rayon_km': 8.0, 'longueur_km': 20.0, 'rapport': (0.6, 1.6)},
     {'nom': 'Secteur de Saint-Lô', 'cible': 'autre', 'code': '414', 'gares': ['Condé-sur-Vire', 'Pont-Hébert', 'Marigny'], 'min_gares': 2},
     {'nom': 'Le Havre', 'cible': 'autre', 'code': '341', 'gares': ['Harfleur', 'Saint-Laurent', 'Étainhus'], 'min_gares': 2},
     {'nom': 'Rivesaltes–Estagel–Saint-Paul-de-Fenouillet', 'cible': 'autre', 'code': '676',
@@ -101,7 +106,10 @@ RELEVE_MANUEL = [
     {'nom': 'Secteur de Bordeaux (position inconnue)', 'cible': 'autre', 'code': '583', 'gares': ['Bordeaux'], 'min_gares': 2},
     {'nom': 'Port de Dunkerque', 'cible': 'autre', 'code': None, 'gares': ['Maritime-Mardyck', 'Port-Ouest', 'Port-Est'], 'min_gares': 2},
     {'nom': 'Calais–Fréthun', 'cible': 'autre', 'code': None, 'gares': ['Calais', 'Fréthun'], 'min_gares': 2},
-    {'nom': 'Royan–Saujon–Gémozac', 'cible': 'autre', 'code': None, 'gares': ['Royan', 'Saujon', 'Gémozac'], 'min_gares': 2},
+    # `zone` : le relevé montre ~13 km centrés sur Gémozac ; le segment retenu par les gares (26,6 km) est découpé et seule la partie
+    # à moins de `rayon_km` du point (latitude, longitude) est reclassée, le reste garde le statut du jeu ouvert.
+    {'nom': 'Royan–Saujon–Gémozac', 'cible': 'autre', 'code': None, 'gares': ['Royan', 'Saujon', 'Gémozac'], 'min_gares': 2,
+     'zone': {'centre': (45.57, -0.75), 'rayon_km': 8.0}},
     {'nom': 'Bort-les-Orgues–Lugarde-Marchastel', 'cible': 'autre', 'code': None, 'gares': ['Bort-les-Orgues', 'Lugarde'], 'min_gares': 2},
     {'nom': 'Leyment–Lagnieu', 'cible': 'autre', 'code': None, 'gares': ['Leyment', 'Lagnieu'], 'min_gares': 2},
     {'nom': 'Brassac-les-Mines–Sainte-Florine–Paulhaguet', 'cible': 'autre', 'code': None,
@@ -374,11 +382,39 @@ def gares_nommees(gares, nom_norm):
     return [(c, pos) for libelle, c, pos in gares if (' ' + nom_norm + ' ') in (' ' + libelle + ' ')]
 
 
+def km_entre(a, b):
+    return math.hypot(*(x - y for x, y in zip(metres(a), metres(b)))) / 1000
+
+
+def decouper_zone(coords, centre, rayon_km):
+    """Coupe un tracé en morceaux consécutifs : (coordonnées, dedans), une arête étant « dedans » si son milieu est à moins de rayon_km de centre."""
+    morceaux = []
+    for a, b in zip(coords, coords[1:]):
+        dedans = km_entre(((a[0] + b[0]) / 2, (a[1] + b[1]) / 2), centre) <= rayon_km
+        if morceaux and morceaux[-1][1] == dedans:
+            morceaux[-1][0].append(b)
+        else:
+            morceaux.append([[a, b], dedans])
+    return [(m, d) for m, d in morceaux]
+
+
+def milieu(coords):
+    """Point au milieu du tracé, mesuré sur sa longueur."""
+    moitie, parcouru = km_polyligne(coords) / 2, 0.0
+    for a, b in zip(coords, coords[1:]):
+        d = km_entre(a, b)
+        if parcouru + d >= moitie and d > 0:
+            t = (moitie - parcouru) / d
+            return (a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]))
+        parcouru += d
+    return coords[-1]
+
+
 def rapprocher_releve(formes, gares_brutes):
-    """Applique RELEVE_MANUEL : renvoie ({indice du segment dans `formes` → cible}, rapport par entrée)."""
+    """Applique RELEVE_MANUEL : renvoie (formes avec les segments découpés, {indice dans ces formes → cible}, rapport par entrée)."""
     gares = [(nom_normalise(g['properties']['libelle']), g['properties']['code_ligne'], g['geometry']['coordinates'])
              for g in gares_brutes if g['geometry']]
-    reclasses, rapport = {}, []
+    reclasses, rapport, zones, km_retenus = {}, [], {}, {}
     for entree in RELEVE_MANUEL:
         noms = [(n, nom_normalise(n)) for n in entree['gares']]
         trouvees = {n: gares_nommees(gares, nn) for n, nn in noms}  # nom relevé → [(code_ligne de la gare, position)]
@@ -390,6 +426,18 @@ def rapprocher_releve(formes, gares_brutes):
         for i, f in enumerate(formes):
             p, coords = f['properties'], f['geometry']['coordinates']
             if p['mnemo'] == 'VS' or len(coords) < 2 or i in reclasses:
+                continue
+            if entree.get('regle') == 'declassee_sans_gares':
+                lat, lon = entree['centre']
+                lg = km_polyligne(coords)
+                bas, haut = entree['rapport']
+                candidats.append((p['code_ligne'], p['mnemo'], round(lg, 1), []))
+                if (p['code_ligne'] == entree['code_exact'] and p['mnemo'].startswith('DEC') and not any(c == p['code_ligne'] for v in trouvees.values() for c, _ in v)
+                        and km_entre(milieu(coords), (lon, lat)) <= entree['rayon_km']
+                        and bas <= lg / entree['longueur_km'] <= haut):
+                    retenus.append(i)
+                    reclasses[i] = entree['cible']
+                    km_retenus[i] = lg
                 continue
             if entree['code'] is not None:
                 if not p['code_ligne'].startswith(entree['code']):
@@ -406,17 +454,38 @@ def rapprocher_releve(formes, gares_brutes):
                 continue
             if len(proches) >= 2 and lg > 1.6 * ecart + 3 and not entree.get('longue'):
                 continue
+            km_i = lg
+            if 'zone' in entree:
+                lat, lon = entree['zone']['centre']
+                km_i = sum(km_polyligne(m) for m, dedans in decouper_zone(coords, (lon, lat), entree['zone']['rayon_km']) if dedans)
+                if km_i == 0:
+                    continue
+                zones[i] = ((lon, lat), entree['zone']['rayon_km'])
             retenus.append(i)
             reclasses[i] = entree['cible']
+            km_retenus[i] = km_i
         rapport.append({'entree': entree['nom'], 'cible': entree['cible'], 'code_releve': entree['code'],
                         'reclasses': [{'code_ligne': formes[i]['properties']['code_ligne'], 'statut_jeu_ouvert': formes[i]['properties']['mnemo'],
-                                       'km': round(km_polyligne(formes[i]['geometry']['coordinates']), 1),
+                                       'km': round(km_retenus[i], 1),
+                                       'segment_km': round(km_polyligne(formes[i]['geometry']['coordinates']), 1),
                                        'gares': sorted(n for n, v in trouvees.items() if any(
                                            distance_polyligne_m(pos, formes[i]['geometry']['coordinates']) <= GARE_MAX_M for _, pos in v))}
                                       for i in retenus],
                         'non_retenus': [c for c in candidats if c[3] and not any(
                             c[0] == formes[i]['properties']['code_ligne'] and c[2] == round(km_polyligne(formes[i]['geometry']['coordinates']), 1) for i in retenus)]})
-    return reclasses, rapport
+    # Segments à zone : découpés, seule la partie dans la zone est reclassée.
+    nouvelles, nouveaux_reclasses = [], {}
+    for i, f in enumerate(formes):
+        if i in zones:
+            for morceau, dedans in decouper_zone(f['geometry']['coordinates'], *zones[i]):
+                nouvelles.append({'type': 'Feature', 'geometry': {'type': 'LineString', 'coordinates': morceau}, 'properties': f['properties']})
+                if dedans:
+                    nouveaux_reclasses[len(nouvelles) - 1] = reclasses[i]
+        else:
+            nouvelles.append(f)
+            if i in reclasses:
+                nouveaux_reclasses[len(nouvelles) - 1] = reclasses[i]
+    return nouvelles, nouveaux_reclasses, rapport
 
 
 def construire_lignes(brut, bilan, bilan_releve):
@@ -441,7 +510,7 @@ def construire_lignes(brut, bilan, bilan_releve):
     avec_voyageurs = {(g['properties']['code_ligne'], g['properties']['rg_troncon'])
                       for g in charger(brut, 'liste-des-gares') if g['properties']['voyageurs'] == 'O'}
 
-    reclasses, rapport = rapprocher_releve(formes, charger(brut, 'liste-des-gares'))
+    formes, reclasses, rapport = rapprocher_releve(formes, charger(brut, 'liste-des-gares'))
     bilan_releve.extend(rapport)
 
     traits = []
@@ -503,6 +572,9 @@ def construire_lignes(brut, bilan, bilan_releve):
                     bilan['longueur km, exploitée, ' + ('électrifiée' if e else 'non électrifiée')] += longueur_km
                     bilan['longueur km, exploitée, voies ' + str(v)] += longueur_km
                 props = {'g': s, 'l': code}
+                if cible in ('suspendue_autre', 'autre'):
+                    # Statut des données ouvertes (E exploitée, N suspendue, F non exploitée, D déclassée), pour la fenêtre d'information.
+                    props['o'] = {'E': 'E', 'N': 'N', 'F': 'F'}.get(STATUTS.get(p['mnemo']), 'D')
                 if s == 'E':
                     props.update({'c': c, 'v': v, 'e': e})
                 traits.append({'type': 'Feature', 'geometry': {'type': 'LineString', 'coordinates': geometrie_simplifiee(morceau)},
