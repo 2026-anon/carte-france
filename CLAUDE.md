@@ -177,7 +177,7 @@ Il réécrit `data/nitrates_cours_eau.csv` et affiche en fin d'exécution un bil
 
 ### Réseau ferré national (`scripts/preparer_rfn.py`, `src/rail.js`)
 
-**Mise à jour** : `pip install numpy` puis `python3 scripts/preparer_rfn.py` (≈ 6 minutes : le comptage des voies est la partie lente). Il télécharge les jeux en
+**Mise à jour** : `pip install numpy` puis `python3 scripts/preparer_rfn.py` (≈ 4 min 30 s mesurées : le comptage des voies est la partie lente ; deux exécutions donnent des fichiers identiques). Il télécharge les jeux en
 GeoJSON dans `scripts/brut_rfn/` (ignoré par git ; `--telecharger` pour les retélécharger) et réécrit les trois fichiers de `data/`. Il affiche un bilan (km par statut,
 catégorie, électrification et nombre de voies ; gares par niveau et par source du niveau). `rfn_meta.json` garde les jeux, leurs dates et licences, les paramètres et le bilan.
 
@@ -205,7 +205,7 @@ enregistrements « électrifiées » et « LGV » n'ont pas de PK : les PK ne se
 - *LGV, voie étroite* : même méthode avec `catlig` (97,6 %) ;
 - *nombre de voies* : nombre de voies principales (VPL, VPA, hors `EVIT`) du jeu des voies à moins de 15 m du milieu de l'arête, puis lissage (une valeur qui ne dure pas 1 km est absorbée
   par son voisin : les gares font monter le compte) ; repli sur le régime d'exploitation (double voie = 2, sinon 1) quand aucune voie n'est trouvée (1 066 km) ; plafonné à 3 (« voies multiples »).
-  Contrôle : sur les arêtes en « double voie » du régime, 91 % ont 2 voies ou plus ; sur les voies uniques, 88 % ont 1 voie ;
+  Contrôle, avant lissage : sur les arêtes en « double voie » du régime, 91 % ont 2 voies ou plus ; sur celles en voie unique où une voie est trouvée, 89 % n'en ont qu'une ;
 - *usage* : un tronçon exploité qui compte au moins une gare ouverte aux voyageurs est « mixte », sinon « fret » ;
 - *statuts* : exploitée = `EXPLOITE` ; **suspendue** = `NEUT`, `NEUT DEF`, `S9A3` (1 segment, ligne en travaux) ; **non exploitée** = `FERME`, `FERME ND`, `FERME D`, `FERME MV`, `FERME DT`.
   Écartés (360 segments) : déclassées (`DEC V`, `DEC NV`, sorties du RFN), retranchée (`RETRANCHE`), transférées en voie de service (`VS`). Cette liste est dans `STATUTS` (`scripts/preparer_rfn.py`).
