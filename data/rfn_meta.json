@@ -3639,6 +3639,21 @@
     "non_retenus": []
    },
    {
+    "entree": "Ligne 370000 (exploitée dans les données, suspendue sur la carte)",
+    "cible": "suspendue",
+    "code_releve": "370",
+    "reclasses": [
+     {
+      "code_ligne": "370000",
+      "statut_jeu_ouvert": "EXPLOITE",
+      "km": 20.6,
+      "segment_km": 20.6,
+      "gares": []
+     }
+    ],
+    "non_retenus": []
+   },
+   {
     "entree": "Royan–Saujon–Gémozac",
     "cible": "autre",
     "code_releve": null,
@@ -3779,7 +3794,7 @@
   ]
  },
  "bilan": {
-  "arêtes exploitées sans voie trouvée (repli sur le régime d'exploitation ou 1 voie), km": 1063.8,
+  "arêtes exploitées sans voie trouvée (repli sur le régime d'exploitation ou 1 voie), km": 1062.0,
   "gares : codes UIC projetés en plusieurs endroits éloignés (> 2 km), gardés séparément": 4,
   "gares : desservie voyageurs, intérêt local": 1756,
   "gares : desservie voyageurs, intérêt national": 133,
@@ -3794,25 +3809,26 @@
   "km reclassés par le relevé manuel, lgv_autre": 325.4,
   "km reclassés par le relevé manuel, suspendue_autre": 77.1,
   "km suspendue (repères et relevé), statut du jeu ouvert DEC V": 38.4,
+  "km suspendue (repères et relevé), statut du jeu ouvert EXPLOITE": 20.6,
   "km suspendue (repères et relevé), statut du jeu ouvert FERME": 73.3,
   "km suspendue (repères et relevé), statut du jeu ouvert FERME MV": 40.2,
   "km suspendue (repères et relevé), statut du jeu ouvert NEUT": 255.0,
   "km suspendue (repères et relevé), statut du jeu ouvert S9A3": 55.6,
-  "longueur km, exploitée, catégorie fret": 2322.8,
+  "longueur km, exploitée, catégorie fret": 2302.1,
   "longueur km, exploitée, catégorie lgv": 2320.3,
   "longueur km, exploitée, catégorie lgv_autre": 300.8,
   "longueur km, exploitée, catégorie metrique": 164.4,
   "longueur km, exploitée, catégorie metrique (ajoutée, jeu LGV et écartement)": 222.9,
   "longueur km, exploitée, catégorie mixte": 22070.4,
-  "longueur km, exploitée, non électrifiée": 10416.2,
-  "longueur km, exploitée, voies 1": 10229.6,
+  "longueur km, exploitée, non électrifiée": 10395.6,
+  "longueur km, exploitée, voies 1": 10208.9,
   "longueur km, exploitée, voies 2": 15748.4,
   "longueur km, exploitée, voies 3": 1200.7,
   "longueur km, exploitée, électrifiée": 16762.4,
   "longueur km, statut A": 147.6,
-  "longueur km, statut E": 27178.7,
+  "longueur km, statut E": 27158.0,
   "longueur km, statut F": 3217.4,
-  "longueur km, statut N": 462.6,
+  "longueur km, statut N": 483.2,
   "longueur km, statut P": 1840.4,
   "longueur km, statut R": 77.1,
   "segments écartés (statut DEC NV)": 64,

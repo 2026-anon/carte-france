@@ -149,6 +149,12 @@ RELEVE_MANUEL = [
     # de `rayon_km` du point + longueur de 0,8 à 1,2 fois `longueur_km`.
     {'nom': 'Ligne 035000 (déclassée, suspendue sur la carte)', 'cible': 'suspendue', 'code': '035', 'gares': [], 'min_gares': 0,
      'regle': 'declassee_au_repere', 'code_exact': '035000', 'centre': (48.23, 6.07), 'rayon_km': 8.0, 'longueur_km': 18.2, 'rapport': (0.8, 1.2)},
+    # Même règle `declassee_au_repere` (nom historique : `statut_prefixe` donne le statut du jeu ouvert accepté) pour le segment 370000 (20,6 km), seul tracé de la
+    # zone suspendue 49,26–49,41 N / 0,99–1,05 E : les données ouvertes le donnent « exploité » alors que la carte SNCF le montre suspendu (comme Montréjeau–Luchon) ;
+    # la fenêtre d'information garde « Données ouvertes : exploitée ».
+    {'nom': 'Ligne 370000 (exploitée dans les données, suspendue sur la carte)', 'cible': 'suspendue', 'code': '370', 'gares': [], 'min_gares': 0,
+     'regle': 'declassee_au_repere', 'statut_prefixe': 'EXPLOITE', 'code_exact': '370000', 'centre': (49.335, 1.02), 'rayon_km': 8.0,
+     'longueur_km': 20.6, 'rapport': (0.8, 1.2)},
     # `zone` : le relevé montre ~13 km centrés sur Gémozac ; le segment retenu par les gares (26,6 km) est découpé et seule la partie
     # à moins de `rayon_km` du point (latitude, longitude) est reclassée, le reste garde le statut du jeu ouvert.
     {'nom': 'Royan–Saujon–Gémozac', 'cible': 'autre', 'code': None, 'gares': ['Royan', 'Saujon', 'Gémozac'], 'min_gares': 2,
@@ -476,7 +482,7 @@ def rapprocher_releve(formes, gares_brutes):
                 lg = km_polyligne(coords)
                 bas, haut = entree['rapport']
                 candidats.append((p['code_ligne'], p['mnemo'], round(lg, 1), []))
-                if (p['code_ligne'] == entree['code_exact'] and p['mnemo'].startswith('DEC')
+                if (p['code_ligne'] == entree['code_exact'] and p['mnemo'].startswith(entree.get('statut_prefixe', 'DEC'))
                         and (entree['regle'] == 'declassee_au_repere' or not any(c == p['code_ligne'] for v in trouvees.values() for c, _ in v))
                         and km_entre(milieu(coords), (lon, lat)) <= entree['rayon_km']
                         and bas <= lg / entree['longueur_km'] <= haut):
