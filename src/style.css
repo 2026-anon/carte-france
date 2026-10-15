@@ -38,6 +38,13 @@ body {
   color: #555;
 }
 
+/* Les fenêtres d'information passent au-dessus du panneau : sur téléphone, celle d'une station (nom long sur deux lignes) peut
+   dépasser la place réservée en haut et ne doit jamais être recouverte par le panneau. */
+.fenetre-departement,
+.fenetre-station {
+  z-index: 3;
+}
+
 /* Fenêtre d'information d'un département : lisible et facile à fermer au doigt. */
 .fenetre-departement .maplibregl-popup-content {
   padding: 12px 48px 12px 16px;
@@ -103,6 +110,14 @@ body {
   color: #333;
 }
 
+/* Type de la couche (eaux souterraines ou de surface), en tête de la fenêtre d'une station. */
+.station-type {
+  margin: 0 0 2px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1d4e89;
+}
+
 .station-nom {
   margin: 0;
   font-size: 1.05rem;
@@ -148,7 +163,7 @@ body {
   bottom: var(--bas);
   box-sizing: border-box;
   width: min(262px, calc(100% - 12px));
-  max-height: calc(100% - var(--bas) - 90px);
+  max-height: calc(100% - var(--bas) - 72px);
   padding: 6px;
   overflow-y: auto;
   display: flex;
@@ -159,7 +174,7 @@ body {
 /* Fond opaque : ni les étiquettes du fond de carte ni les points ne doivent transparaître. */
 .bloc {
   flex: none;
-  padding: 8px 12px;
+  padding: 6px 12px;
   background: #fff;
   border-radius: 6px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
@@ -178,7 +193,7 @@ body {
 }
 
 .bloc[open] .bloc-titre {
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .legende ul {
@@ -191,7 +206,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 2px 0;
+  margin: 1px 0;
 }
 
 .legende-pastille {
@@ -203,33 +218,50 @@ body {
 }
 
 .legende-note {
-  margin: 6px 0 0;
+  margin: 4px 0 0;
   color: #555;
 }
 
-/* Filtres de la couche nitrates. */
-.filtres-classes {
+.legende-sous-titre {
+  margin: 4px 0 2px;
+  font-weight: 600;
+}
+
+/* Symbole du contour d'une couche : disque neutre ; la couleur et l'épaisseur du trait sont posées par le script
+   (src/nitrates.js), d'après la configuration de la couche. L'anneau extérieur rend visible un trait blanc sur fond blanc. */
+.legende-symbole {
+  flex: none;
+  box-sizing: border-box;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #8d99a6;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+}
+
+/* Cases à cocher : classes des filtres et couches affichées. */
+.case-groupe {
   margin: 0 0 4px;
   padding: 0;
   border: 0;
   min-width: 0;
 }
 
-.filtres-intitule {
+.case-intitule {
   padding: 0;
   margin-bottom: 2px;
   font-weight: 600;
 }
 
-.filtres-ligne {
+.case-ligne {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 28px;
+  min-height: 24px;
   cursor: pointer;
 }
 
-.filtres-ligne input {
+.case-ligne input {
   flex: none;
   width: 16px;
   height: 16px;
@@ -260,13 +292,13 @@ body {
 }
 
 .filtres-compteur {
-  margin: 4px 0 6px;
+  margin: 2px 0 4px;
   font-weight: 600;
 }
 
 .filtres-reinit {
   width: 100%;
-  padding: 6px 10px;
+  padding: 5px 10px;
   font: inherit;
   color: #1d4e89;
   background: #fff;
@@ -282,11 +314,11 @@ body {
     margin-bottom: 0;
   }
 
-  .filtres-ligne {
+  .case-ligne {
     min-height: 40px;
   }
 
-  .filtres-ligne input {
+  .case-ligne input {
     width: 22px;
     height: 22px;
   }
