@@ -2,10 +2,20 @@
 """Télécharge la dernière analyse de nitrates de chaque station (eaux souterraines, France métropolitaine)
 depuis l'API Hub'Eau « Qualité des nappes d'eau souterraine » et écrit data/nitrates_stations.csv.
 
-Usage : python3 scripts/fetch_nitrates.py
+Usage : python3 scripts/fetch_nitrates.py [--departements 11 2A ...] [--sortie fichier.csv]
 Limites de l'API respectées : taille de page max 20000, profondeur (page × taille) max 20000,
 d'où une requête par département, découpée par année si un département dépasse 20000 analyses.
+
+Règles de sélection (les mêmes qu'avec scripts/fetch_nitrates_cours_eau.py pour la qualification) :
+1. Qualification : les analyses « Incorrecte » (code_qualification 2) et « Incertaine » (3) sont ignorées AVANT de choisir la
+   dernière analyse de chaque station ; « Correcte » (1), « Non qualifié » (4) et le code 0 (« non définissable ») sont gardées.
+   Une station dont toutes les analyses sont ignorées disparaît (comptée à part).
+2. Dernière analyse : le plus grand horodatage date_debut_prelevement. À horodatage identique (fractions différentes), on garde
+   la valeur la plus élevée (une valeur absente passe après toute valeur), puis à valeur égale l'unité par ordre alphabétique :
+   l'ordre est total, donc deux exécutions donnent le même CSV, quel que soit l'ordre de réception des lignes par l'API.
+3. Une station dont la dernière analyse n'a pas de valeur, ou sans coordonnées, est ignorée : on ne retombe pas sur une plus ancienne.
 """
+import argparse
 import csv
 import json
 import sys
@@ -20,10 +30,12 @@ URL = 'https://hubeau.eaufrance.fr/api/v1/qualite_nappes/analyses'
 CODE_NITRATES = 1340
 TAILLE_PAGE = 5000  # défaut de l'API ; page × taille reste sous la profondeur max de 20000
 PROFONDEUR_MAX = 20000
+QUALIFICATIONS_IGNOREES = {'2', '3'}  # code_qualification : Incorrecte, Incertaine
 CHAMPS = ('bss_id,code_bss,longitude,latitude,nom_commune_actuel,num_departement,'
-          'date_debut_prelevement,resultat,symbole_unite')
+          'date_debut_prelevement,resultat,symbole_unite,code_qualification')
 DEPARTEMENTS = [f'{n:02d}' for n in range(1, 96) if n != 20] + ['2A', '2B']  # codes en texte
 SORTIE = Path(__file__).resolve().parent.parent / 'data' / 'nitrates_stations.csv'
+COLONNES = ['code_station', 'nom', 'lat', 'lon', 'commune', 'code_dept', 'date_analyse', 'valeur', 'unite']
 
 
 def aujourd_hui_moins_5_ans():
@@ -68,30 +80,43 @@ def analyses(dept, debut, fin):
     return donnees
 
 
-def main():
-    debut = aujourd_hui_moins_5_ans().isoformat()
-    fin = date.today().isoformat()
-    dernieres = {}  # code_station -> dernière analyse (valeur absente comprise)
-    total = 0
-    for dept in DEPARTEMENTS:
-        lignes = analyses(dept, debut, fin)
-        total += len(lignes)
-        print(f'{dept} : {len(lignes)} analyses', file=sys.stderr)
-        for a in lignes:
-            ancienne = dernieres.get(a['bss_id'])
-            if ancienne is None or a['date_debut_prelevement'] > ancienne['date_debut_prelevement']:
-                dernieres[a['bss_id']] = a
+def cle_analyse(a):
+    """Clé de « dernière analyse » : horodatage, puis valeur la plus élevée (absente en dernier), puis unité."""
+    valeur = a['resultat']
+    return (a['date_debut_prelevement'], valeur is not None, valeur if valeur is not None else 0, a['symbole_unite'] or '')
+
+
+def selectionner(lignes):
+    """Applique les règles de sélection (voir l'en-tête). Renvoie (stations écrites, bilan)."""
+    bilan = Counter()
+    dernieres = {}  # code_station -> dernière analyse retenue (valeur absente comprise)
+    stations_vues = set()
+    for a in lignes:
+        bilan['analyses lues'] += 1
+        bilan['qualification ' + str(a['code_qualification'])] += 1
+        stations_vues.add(a['bss_id'])
+        if a['code_qualification'] in QUALIFICATIONS_IGNOREES:
+            bilan['analyses ignorées (Incorrecte ou Incertaine)'] += 1
+            continue
+        ancienne = dernieres.get(a['bss_id'])
+        if ancienne is not None and a['date_debut_prelevement'] == ancienne['date_debut_prelevement']:
+            bilan['égalités station + horodatage'] += 1
+            if a['resultat'] != ancienne['resultat']:
+                bilan['égalités avec des valeurs différentes'] += 1
+        if ancienne is None or cle_analyse(a) > cle_analyse(ancienne):
+            dernieres[a['bss_id']] = a
+    bilan['stations avec une analyse'] = len(stations_vues)
+    bilan['stations sans analyse retenue (toutes Incorrecte ou Incertaine)'] = len(stations_vues - set(dernieres))
 
     # On écarte une station si sa dernière analyse est inexploitable, sans retomber sur une plus ancienne.
-    stations = {}
-    ignorees = Counter()
+    ecrites = {}
     for code, a in dernieres.items():
         if a['resultat'] is None:
-            ignorees['valeur absente'] += 1
+            bilan['ignorée : valeur absente'] += 1
         elif a['longitude'] is None or a['latitude'] is None:
-            ignorees['coordonnées manquantes'] += 1
+            bilan['ignorée : coordonnées manquantes'] += 1
         else:
-            stations[code] = {
+            ecrites[code] = {
                 'code_station': code,
                 'nom': a['code_bss'],
                 'lat': round(a['latitude'], 4),
@@ -102,16 +127,38 @@ def main():
                 'valeur': a['resultat'],
                 'unite': a['symbole_unite'] or '',
             }
-    with open(SORTIE, 'w', newline='', encoding='utf-8') as f:
-        champs = ['code_station', 'nom', 'lat', 'lon', 'commune', 'code_dept', 'date_analyse', 'valeur', 'unite']
-        w = csv.DictWriter(f, fieldnames=champs, lineterminator='\n')
+    bilan['stations écrites'] = len(ecrites)
+    return ecrites, bilan
+
+
+def ecrire(ecrites, sortie):
+    with open(sortie, 'w', newline='', encoding='utf-8') as f:
+        w = csv.DictWriter(f, fieldnames=COLONNES, lineterminator='\n')
         w.writeheader()
-        for s in sorted(stations.values(), key=lambda s: s['code_station']):
+        for s in sorted(ecrites.values(), key=lambda s: s['code_station']):
             w.writerow(s)
-    print(f'{total} analyses lues depuis {debut}, {len(dernieres)} stations, {len(stations)} écrites dans {SORTIE}', file=sys.stderr)
-    for motif, n in ignorees.items():
-        print(f'stations ignorées ({motif}) : {n}', file=sys.stderr)
-    print('unités :', dict(Counter(s['unite'] for s in stations.values())), file=sys.stderr)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
+    parser.add_argument('--departements', nargs='+', default=DEPARTEMENTS, help='codes de départements (texte), tous par défaut')
+    parser.add_argument('--sortie', type=Path, default=SORTIE, help='fichier CSV à écrire')
+    args = parser.parse_args()
+
+    debut = aujourd_hui_moins_5_ans().isoformat()
+    fin = date.today().isoformat()
+    lignes = []
+    for dept in args.departements:
+        a = analyses(dept, debut, fin)
+        lignes += a
+        print(f'{dept} : {len(a)} analyses', file=sys.stderr)
+
+    ecrites, bilan = selectionner(lignes)
+    ecrire(ecrites, args.sortie)
+    print(f'depuis {debut} : {args.sortie}', file=sys.stderr)
+    for motif, n in sorted(bilan.items()):
+        print(f'{motif} : {n}', file=sys.stderr)
+    print('unités :', dict(Counter(s['unite'] for s in ecrites.values())), file=sys.stderr)
 
 
 if __name__ == '__main__':
