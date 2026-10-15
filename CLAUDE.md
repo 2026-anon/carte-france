@@ -37,6 +37,7 @@ Il n'y a pas encore de tests ni de linter.
 - `src/style.css` : styles de la page
 - `data/` : données géographiques (`departements.geojson`, 96 départements métropolitains, propriétés `code` et `nom`)
 - `scripts/fetch_nitrates.py` : mise à jour de `data/nitrates_stations.csv` depuis Hub'Eau
+- `scripts/fetch_nitrates_cours_eau.py` : mise à jour de `data/nitrates_cours_eau.csv` depuis Hub'Eau
 - `public/` : fichiers servis tels quels (favicon)
 
 ## Conventions
@@ -83,6 +84,10 @@ Il n'y a pas encore de tests ni de linter.
   Une ligne par station : la dernière analyse parmi celles des 5 dernières années. Colonnes : `code_station` (texte, `bss_id`),
   `nom` (ancien code BSS : l'API ne fournit pas de nom de station), `lat`, `lon` (WGS84, 4 décimales), `commune`,
   `code_dept` (texte), `date_analyse` (AAAA-MM-JJ), `valeur`, `unite` (telle que renvoyée : `mg(NO3)/L`).
+- `data/nitrates_cours_eau.csv` : nitrates dans les eaux de surface (cours d'eau et plans d'eau), API Hub'Eau « Qualité des cours d'eau » v2
+  (`/api/v2/qualite_rivieres/analyse_pc` et `station_pc`, paramètre SANDRE 1340), données Naïades, Licence ouverte Etalab 2.0.
+  Mêmes colonnes et mêmes règles que `nitrates_stations.csv` (une ligne par station, dernière analyse sur 5 ans), mais `nom` est ici le
+  libellé de la station (`libelle_station`) et `code_station` le code Naïades (texte, 8 caractères le plus souvent, parfois 7 ou avec des tirets : `F31-4443`). **Pas encore affichée sur la carte.** `unite` vaut toujours `mg(NO3)/L` (voir « Unité » ci-dessous).
 - `data/layers.csv` : catalogue des couches (`id,nom,fichier,type,cle_jointure,colonne_valeur,filtres,palette,unite,source`).
   Documentation seulement : le code ne le lit pas encore, les réglages de la couche sont dans `src/nitrates.js`.
   La colonne `palette` renvoie à `CLASSES` : ne pas y recopier les couleurs.
@@ -93,6 +98,46 @@ Il n'y a pas encore de tests ni de linter.
 l'API est lente). Il réécrit `data/nitrates_stations.csv` et affiche le nombre de stations, celles ignorées et les unités.
 Limites de l'API respectées : page de 5000 au plus (max 20000) et profondeur `page × taille` ≤ 20000, d'où le découpage par
 département (et par période au-delà de 20000 analyses). La fenêtre est `aujourd'hui − 5 ans`.
+
+### Mettre à jour les nitrates des eaux de surface
+
+`python3 scripts/fetch_nitrates_cours_eau.py` (Python 3 standard, aucune dépendance ; compter plusieurs dizaines de minutes : l'API est lente).
+Il réécrit `data/nitrates_cours_eau.csv` et affiche en fin d'exécution un bilan : analyses lues, doublons, qualifications, stations écrites et ignorées
+(avec le motif), unités rencontrées.
+
+- **API v2 uniquement** (`/api/v2/qualite_rivieres`) : la v1 est fermée. Stations via `station_pc`, analyses via `analyse_pc`, rattachées par
+  `code_station`. `analyse_pc` ne donne ni nom, ni commune, ni département : ils viennent de `station_pc`, ainsi que `lat` et `lon`.
+- Noms de champs réels (vérifiés par une requête d'une ligne, pas devinés) : `code_parametre` (filtre, `1340`), `code_departement`,
+  `date_debut_prelevement` / `date_fin_prelevement` (filtres), `date_prelevement` et `heure_prelevement` (résultat), `resultat`,
+  `symbole_unite`, `code_support`, `code_qualification`, `code_analyse`. Côté stations : `libelle_station`, `libelle_commune`, `code_departement`, `latitude`, `longitude`.
+- Limites : page de 5000 au plus (max 20000), profondeur `page × taille` ≤ 20000 : une requête par département (Corse `2A`/`2B` comprise,
+  Paris `75` aussi), coupée en deux périodes tant qu'elle dépasse 20000 résultats. Fenêtre : `aujourd'hui − 5 ans`.
+- **Doublons** : une même analyse peut apparaître plusieurs fois ; clé de déduplication `(code_station, code_analyse)`. **Ne jamais dédupliquer sur
+  `code_analyse` seul** : il n'est pas unique (37 analyses de stations différentes en partageaient un ; la première version en supprimait une au hasard
+  de l'ordre des départements, ce qui a faussé la valeur de 11 stations). Deux analyses de même station, date et heure (fractions différentes) :
+  on garde la plus grande clé `code_analyse`, les codes numériques se comparant comme des nombres, les autres (alphanumériques) comme du texte,
+  numériques d'abord. Le script compte les égalités dont les valeurs diffèrent.
+- Seul le support « Eau » (`code_support` = `3`) est retenu ; les autres sont comptés et ignorés.
+- **Qualification** : les analyses « Incorrecte » (`code_qualification` 2) et « Incertaine » (3) sont ignorées **avant** de choisir la dernière analyse
+  de chaque station ; « Correcte » (1) et « Non qualifié » (4) sont gardées. Sur 261 948 analyses uniques : 257 242 Correcte, 4 297 Non qualifié,
+  408 Incertaine, 0 Incorrecte, 1 de code 0. Effet mesuré : 0 station ne disparaît, 1 apparaît (sa dernière analyse, sans valeur et Incertaine, est écartée),
+  58 changent de valeur, 57 de date, 25 de classe. Contrairement à cette couche, `scripts/fetch_nitrates.py` (eaux souterraines) ne lit pas la qualification.
+- **Unité** : l'unité attendue pour 1340 est `mg(NO3)/L`. Les analyses en `mg/L` sont **lues comme du `mg(NO3)/L`** (1 779 stations) et la colonne `unite`
+  est écrite `mg(NO3)/L`. Justification chiffrée (comparée le 2026-10-14) : 961 stations ont les deux unités ; sur 736 paires à 30 jours ou moins
+  (156 stations, 23 départements, dont 141 paires dans le 64 et 22 dans le 40) le rapport `mg/L` ÷ `mg(NO3)/L` a pour médiane 1,00 (quartiles 0,86 à 1,21),
+  71 % des paires sont entre 0,7 et 1,4, et 6 seulement (valeurs très faibles) proches de 0,23, le rapport d'un azote ; les stations changent d'étiquette
+  dans les deux sens (339 de `mg(NO3)/L` vers `mg/L`, 529 l'inverse). **Limite : le 65, le 09 et le 72 n'ont aucune paire de comparaison** : pour eux,
+  c'est une déduction, pas une vérification. Les autres unités (`mg(CO3)/L`, `mg(N)/L`) ne sont **pas converties** : leur station n'est pas écrite et
+  le script la compte.
+- Comme pour les eaux souterraines, une station dont la dernière analyse n'a pas de valeur ou de coordonnées est ignorée, sans retomber sur une plus ancienne.
+- **Valeurs extrêmes examinées et conservées** : les 7 stations au-dessus de 100 mg(NO3)/L ont été passées en revue (série complète, statut, qualification),
+  aucune n'est retirée. Thiéloup à Mesnil-Saint-Père (140, contre 2,5 à 19 avant), Canal du Midi à Villepinte (102, médiane 1,7) et Ségrassiés à
+  Pampelonne (193, une seule autre analyse à 46) restent douteuses mais non prouvées fausses. Préfontaines (118), Plauzat (110), Toucy (110, pic d'automne
+  qui se répète) et la Jorle à Sénestis (130, série de 96 à 144 ; ses analyses alternent `mg/L` et `mg(NO3)/L` avec des valeurs concordantes) sont cohérentes
+  avec leur historique. La Verdonnelle (123, Incertaine) n'y figure plus : le filtre de qualification la ramène à 31,4 (2026-03-10).
+- Pour tester le script sans tout télécharger : `python3 scripts/fetch_nitrates_cours_eau.py --departements 61 2A 64 --sortie /tmp/test.csv`, puis comparer
+  aux lignes du CSV de ces départements (le 61 et la 2A ont un `code_analyse` en commun : cas de test de la déduplication).
+- Classes d'affichage : celles de `CLASSES` dans `src/nitrates.js`, à ne pas recopier.
 
 ### Conventions de la couche nitrates
 
