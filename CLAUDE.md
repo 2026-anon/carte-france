@@ -93,7 +93,7 @@ Il n'y a pas encore de tests ni de linter.
   (`/api/v2/qualite_rivieres/analyse_pc` et `station_pc`, paramètre SANDRE 1340), données Naïades, Licence ouverte Etalab 2.0.
   Mêmes colonnes et mêmes règles que `nitrates_stations.csv` (une ligne par station, dernière analyse sur 5 ans), mais `nom` est ici le
   libellé de la station (`libelle_station`) et `code_station` le code Naïades (texte, 8 caractères le plus souvent, parfois 7 ou avec des tirets : `F31-4443`). Affichée sur la carte (couche `nitrates_eaux_surface`). `unite` vaut toujours `mg(NO3)/L` (voir « Unité » ci-dessous).
-- `data/rfn_lignes.geojson` (1,77 Mo, 0,5 Mo compressé), `data/rfn_gares.geojson` (0,6 Mo) et `data/rfn_meta.json` : réseau ferré national, **données dérivées sous
+- `data/rfn_lignes.geojson` (1,79 Mo, 0,5 Mo compressé), `data/rfn_gares.geojson` (0,6 Mo) et `data/rfn_meta.json` : réseau ferré national, **données dérivées sous
   licence ODbL** (voir `data/LICENCE_RFN.md` : attribution et partage à l'identique). Jeux, dates et règles : section « Réseau ferré national » ci-dessous.
 - `data/layers.csv` : catalogue des couches (`id,nom,fichier,type,cle_jointure,colonne_valeur,filtres,palette,unite,source`).
   Documentation seulement : le code ne le lit pas encore, les réglages des couches sont dans `COUCHES` (`src/nitrates.js`), dont l'`id`
@@ -210,13 +210,16 @@ enregistrements « électrifiées » et « LGV » n'ont pas de PK : les PK ne se
   Une gare est desservie si elle est marquée voyageurs dans `liste-des-gares` **et** (fréquentation 2024 > 0 dans `frequentation-gares` **ou** présente dans `gares-de-voyageurs`, rapprochement par code UIC à 8 chiffres).
   Les LGV restent des LGV. Avant (au moins une gare voyageurs) : 1 434 km de fret ; après : 2 323 km, dans l'estimation lue sur le PDF SNCF (2 000–3 100) ; ce critère est une approximation (un tronçon bascule en entier) ;
 - *statuts* : exploitée = `EXPLOITE`. **Non exploitée** (pointillé) = `NEUT`, `NEUT DEF`, `S9A3` **et** `FERME`, `FERME ND`, `FERME D`, `FERME MV`, `FERME DT` : sur la carte SNCF (mars 2026) les tracés gris sont presque tous
-  en pointillé. Elle est **scindée en deux** selon `CODES_GRIS_SNCF` (les 3 premiers chiffres du code de ligne, relevés sur les cartouches du PDF) : `F` = code présent sur la carte SNCF (3 356 km) ;
-  **`P` = « non exploitée, probablement absente de la carte SNCF »** (code absent de la liste : 1 962 km ; mêmes pointillés, case de filtre propre **cochée par défaut** : toutes les lignes inactives restent visibles).
+  en pointillé. Elle est **scindée en deux** selon `CODES_GRIS_SNCF` (les 3 premiers chiffres du code de ligne, relevés sur les cartouches du PDF) : `F` = code présent sur la carte SNCF (3 217 km) ;
+  **`P` = « non exploitée, probablement absente de la carte SNCF »** (code absent de la liste : 1 840 km ; mêmes pointillés, case de filtre propre **cochée par défaut** : toutes les lignes inactives restent visibles).
   Raison : le PDF montre 2 000–3 100 km de non exploitée, les données ouvertes en donnent 5 300 ; les lignes dont le code n'y figure pas sont probablement absentes de la carte SNCF (datée d'avril 2025, plus ancienne que les données).
   **La liste de codes est incomplète** (cartouches illisibles ou absents) : certaines lignes de `P` figurent peut-être sur la carte SNCF. Le classement ne change rien d'autre (style, statut des données ouvertes dans la fenêtre).
-  **Suspendue** (longs tirets gris) : uniquement les segments `NEUT*`/`S9A3`/`FERME*`/`DEC V` des lignes de `SUSPENDUE_REPERES` (370, 229, 610, 580, 652, 447), **et seulement leurs arêtes à moins de 15 km d'un repère**
-  (le segment est découpé, `appliquer_suspendue`), plus le segment déclassé 035000 (entrée de `RELEVE_MANUEL`, règle `declassee_au_repere`, ~18,2 km autour de 48,23 N / 6,07 E) : 189 km (400 km environ
-  sur le PDF : il en manque ; on n'ajoute pas de segments sans repère). Les codes 695, 705, 712, 613, 664 et 686 n'ont plus de traitement particulier : absents de la liste, ils sont dans `P`.
+  **Suspendue** (longs tirets gris) : 12 zones relevées sur la carte SNCF (`SUSPENDUE_ZONES`, rectangles latitude/longitude, ≈ 400 km de traits au total à ±30 %). Les segments `NEUT*`/`S9A3`/`FERME*`/`DEC V`,
+  ou les parties de segments (découpés, `appliquer_suspendue`), dont l'arête a son milieu dans une zone élargie de 3 km sont « suspendus » ; le reste reste « non exploitée ». Plus le segment déclassé 035000 (entrée de
+  `RELEVE_MANUEL`, règle `declassee_au_repere`, ~18,2 km autour de 48,23 N / 6,07 E). Résultat : 462 km (444 km pour les zones). Le bilan par zone (km reclassés, rapport aux km lus, segments) est dans `rfn_meta.json`
+  (`suspendue_par_zones`) : toutes les zones sont entre 0,94 et 1,63 fois les km lus, **sauf la zone 49,26–49,41 N / 0,99–1,05 E (≈ 20 km) : 0 km**, car le seul tracé de la zone est le segment 370000, **exploité** dans les
+  données ouvertes (20,6 km) ; les statuts reclassés ne comprennent pas `EXPLOITE`. La zone 49,58–49,91 N / 3,64–4,09 E donne 88 km pour 54 lus (229000 `S9A3` 55,6 km, 236000 24,1 km, 228000 8,5 km).
+  Les codes 695, 705, 712, 613, 664 et 686 n'ont pas de traitement particulier : absents de `CODES_GRIS_SNCF`, ils sont dans `P`, sauf là où une zone suspendue les recouvre (613 par exemple).
   Écartés : déclassées (`DEC V`, `DEC NV`, sorties du RFN), retranchée (`RETRANCHE`), transférées en voie de service (`VS`), sauf reclassement ci-dessus. Cette liste est dans `STATUTS` (`scripts/preparer_rfn.py`).
 - *gares* : une gare par code UIC (les projections à moins de 2 km sont fusionnées) ; niveau d'intérêt = segment DRG A → national, B → régional, C → local, lu dans `gares-de-voyageurs` (2 757 gares),
   sinon `frequentation-gares` (143), sinon local par défaut (50, signalé dans la fenêtre) ; les gares ni voyageurs ni fret (2 647) ne sont pas représentées.
@@ -234,10 +237,10 @@ enregistrements « électrifiées » et « LGV » n'ont pas de PK : les PK ne se
   relevée portée par ce code ; le segment porte pourtant d'autres gares, dont Les Herbiers), car Torfou et Les Brouzils sont sur d'autres codes.
   **Écarts de statut** : les segments reclassés (`N`, `R`, `A`) et les lignes neutralisées dessinées en `F` ou `P` portent `o`, le statut des données ouvertes (`E` exploitée, `N` neutralisée, `F` fermée, `D` déclassée), affiché dans la fenêtre (« Données ouvertes : … »). Montréjeau–Luchon (668000) est
   reclassé « suspendue, reprise par un autre gestionnaire » d'après le PDF SNCF de mars 2026 alors que **les données ouvertes la donnent « exploitée »** ; Dunkerque (302506) est dans le même cas.
-  Valeurs de `g` dans `rfn_lignes.geojson` : `E` exploitée, `F` non exploitée (`STATUTS`), `P` non exploitée probablement absente de la carte SNCF (`CODES_GRIS_SNCF`), `N` suspendue (repères et relevé seulement), plus `R` (suspendue reprise par un autre gestionnaire) et `A` (autre réseau ou touristique) ; `c` vaut en plus `lgv_autre`. Résultat et
+  Valeurs de `g` dans `rfn_lignes.geojson` : `E` exploitée, `F` non exploitée (`STATUTS`), `P` non exploitée probablement absente de la carte SNCF (`CODES_GRIS_SNCF`), `N` suspendue (zones et relevé seulement), plus `R` (suspendue reprise par un autre gestionnaire) et `A` (autre réseau ou touristique) ; `c` vaut en plus `lgv_autre`. Résultat et
   entrées non appariées (à compléter par un relevé plus précis ou des codes confirmés) : voir le rapport de la PR.
 - *Approximations* : **mixte / fret** (aucun jeu ne donne l'usage : « fret » = tronçon exploité sans 2 gares voyageurs desservies, soit 2 323 km sur 27 220 km exploités) ; **voie métrique** (#ED1650) = lignes à voie étroite du RFN
-  (5 lignes, 164 km), qui ne séparent pas « autre réseau » de « touristique » ; **évitements** = voies nommées `EVIT` du jeu des voies (194), dont 43 % sont à plus de 100 m de la ligne dessinée de même code (positions du jeu) ;
+  (5 lignes dans le jeu LGV/écartement : 600, 669, 896 dans le fichier de formes, 164 km ; **995 et 996 (Corse) absentes du fichier de formes**, ajoutées depuis le tracé du jeu LGV/écartement (`LIGNES_ETROITES_AJOUTEES`, 152 et 71 km, gares vérifiées), soit 386 km), qui ne séparent pas « autre réseau » de « touristique » ; **évitements** = voies nommées `EVIT` du jeu des voies (194), dont 43 % sont à plus de 100 m de la ligne dessinée de même code (positions du jeu) ;
   **nombre de voies** (méthode ci-dessus) ; **national / régional / local** (les jeux ouverts parlent de « segment DRG » A/B/C sans le définir ; la correspondance est l'usage courant) ; **gare desservie** = drapeau
   « voyageurs » du RFN (59 des 2 950 gares n'ont aucun voyageur en 2024 dans la fréquentation).
 - *Différences de style* : les traits d'électrification sont un motif répété à partir du zoom 7 ; une LGV est toujours dessinée en double trait, quel que soit son nombre de voies ; les évitements suivent
@@ -257,7 +260,7 @@ enregistrements « électrifiées » et « LGV » n'ont pas de PK : les PK ne se
   et le nombre de gares (avant l'effet du zoom).
 - Clic ou toucher : une gare (marge 4 px à la souris, 10 px au doigt) puis une ligne ouvrent une fenêtre (`.fenetre-station`, type « Réseau ferré national »). Priorité : station de nitrates > gare > ligne > département
   (`railSous`, `src/rail.js`, est aussi lu par `src/departements.js`).
-- Géométrie : Douglas-Peucker à 12 m et coordonnées à 5 décimales (1 m) : 1,77 Mo pour 2 926 traits et 74 124 sommets.
+- Géométrie : Douglas-Peucker à 12 m et coordonnées à 5 décimales (1 m) : 1,79 Mo pour 2 933 traits et 75 327 sommets.
 
 **Tester** : mêmes principes que « Tester la couche nitrates ». Pièges rencontrés : une expression `['==', 0, 1]` est lue comme un ancien filtre (« string expected ») : utiliser `['literal', false]` ;
 `queryRenderedFeatures` renvoie des objets dont `geometry` ne passe pas dans `page.evaluate` (en extraire les coordonnées dans la page) ; une position sous le panneau reçoit le clic du panneau ;

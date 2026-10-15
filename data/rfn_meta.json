@@ -75,64 +75,1103 @@
   "FERME MV": "F",
   "FERME DT": "F"
  },
- "suspendue_par_reperes": {
-  "rayon_km": 15.0,
-  "reperes": {
-   "370": [
-    [
-     49.35,
+ "suspendue_par_zones": {
+  "marge_km": 3.0,
+  "zones": [
+   {
+    "zone": [
+     50.04,
+     50.13,
+     1.43,
+     1.84
+    ],
+    "km_lus_sur_le_pdf": 34,
+    "km_reclasses": 36.4,
+    "rapport": 1.07,
+    "hors_de_0_5_a_1_8": false,
+    "segments": {
+     "323000 FERME": 36.4
+    }
+   },
+   {
+    "zone": [
+     49.58,
+     49.91,
+     3.64,
+     4.09
+    ],
+    "km_lus_sur_le_pdf": 54,
+    "km_reclasses": 88.2,
+    "rapport": 1.63,
+    "hors_de_0_5_a_1_8": false,
+    "segments": {
+     "228000 DEC V": 8.5,
+     "229000 S9A3": 55.6,
+     "236000 FERME": 24.1,
+     "236000 NEUT": 0.0
+    }
+   },
+   {
+    "zone": [
+     49.26,
+     49.41,
+     0.99,
      1.05
     ],
-    [
-     49.18,
-     1.13
-    ]
-   ],
-   "229": [
-    [
-     49.8,
-     3.83
-    ]
-   ],
-   "610": [
-    [
-     45.79,
-     0.42
-    ]
-   ],
-   "580": [
-    [
-     45.15,
-     -0.33
-    ]
-   ],
-   "652": [
-    [
-     43.82,
-     -0.47
+    "km_lus_sur_le_pdf": 20,
+    "km_reclasses": 0.0,
+    "rapport": 0.0,
+    "hors_de_0_5_a_1_8": true,
+    "segments": {}
+   },
+   {
+    "zone": [
+     48.54,
+     48.72,
+     -3.97,
+     -3.86
     ],
-    [
-     43.34,
-     0.05
+    "km_lus_sur_le_pdf": 25,
+    "km_reclasses": 25.4,
+    "rapport": 1.02,
+    "hors_de_0_5_a_1_8": false,
+    "segments": {
+     "447000 NEUT": 25.4
+    }
+   },
+   {
+    "zone": [
+     46.84,
+     46.9,
+     4.9,
+     5.03
     ],
-    [
-     43.14,
-     0.09
-    ]
-   ],
-   "447": [
-    [
-     48.61,
-     -3.92
-    ]
-   ]
-  },
+    "km_lus_sur_le_pdf": 15,
+    "km_reclasses": 20.4,
+    "rapport": 1.36,
+    "hors_de_0_5_a_1_8": false,
+    "segments": {
+     "865000 DEC V": 2.5,
+     "865000 NEUT": 3.0,
+     "867000 NEUT": 13.8,
+     "867612 NEUT": 0.1,
+     "867616 NEUT": 1.1
+    }
+   },
+   {
+    "zone": [
+     45.64,
+     45.89,
+     0.17,
+     0.81
+    ],
+    "km_lus_sur_le_pdf": 70,
+    "km_reclasses": 66.3,
+    "rapport": 0.95,
+    "hors_de_0_5_a_1_8": false,
+    "segments": {
+     "610000 NEUT": 66.3
+    }
+   },
+   {
+    "zone": [
+     45.25,
+     45.51,
+     1.21,
+     1.39
+    ],
+    "km_lus_sur_le_pdf": 41,
+    "km_reclasses": 41.2,
+    "rapport": 1.01,
+    "hors_de_0_5_a_1_8": false,
+    "segments": {
+     "613000 NEUT": 41.2
+    }
+   },
+   {
+    "zone": [
+     45.13,
+     45.19,
+     -0.4,
+     -0.24
+    ],
+    "km_lus_sur_le_pdf": 15,
+    "km_reclasses": 21.4,
+    "rapport": 1.42,
+    "hors_de_0_5_a_1_8": false,
+    "segments": {
+     "547000 NEUT": 4.3,
+     "580000 DEC V": 2.2,
+     "580000 NEUT": 14.9
+    }
+   },
+   {
+    "zone": [
+     44.31,
+     44.39,
+     2.57,
+     3.04
+    ],
+    "km_lus_sur_le_pdf": 44,
+    "km_reclasses": 42.3,
+    "rapport": 0.96,
+    "hors_de_0_5_a_1_8": false,
+    "segments": {
+     "725000 FERME MV": 40.2,
+     "725000 NEUT": 2.1
+    }
+   },
+   {
+    "zone": [
+     44.13,
+     44.28,
+     4.07,
+     4.18
+    ],
+    "km_lus_sur_le_pdf": 30,
+    "km_reclasses": 28.1,
+    "rapport": 0.94,
+    "hors_de_0_5_a_1_8": false,
+    "segments": {
+     "805000 DEC V": 0.0,
+     "805000 NEUT": 18.8,
+     "808000 NEUT": 3.5,
+     "813000 FERME": 5.7
+    }
+   },
+   {
+    "zone": [
+     43.68,
+     43.88,
+     -0.5,
+     -0.26
+    ],
+    "km_lus_sur_le_pdf": 34,
+    "km_reclasses": 40.1,
+    "rapport": 1.18,
+    "hors_de_0_5_a_1_8": false,
+    "segments": {
+     "652000 NEUT": 32.9,
+     "654000 FERME": 7.2
+    }
+   },
+   {
+    "zone": [
+     42.85,
+     43.04,
+     2.16,
+     2.24
+    ],
+    "km_lus_sur_le_pdf": 27,
+    "km_reclasses": 34.7,
+    "rapport": 1.28,
+    "hors_de_0_5_a_1_8": false,
+    "segments": {
+     "676000 DEC V": 7.0,
+     "676000 NEUT": 27.7
+    }
+   }
+  ],
   "segments": [
+   {
+    "code_ligne": "002000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 11.7
+   },
+   {
+    "code_ligne": "002000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 19.6
+   },
+   {
+    "code_ligne": "004000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.9
+   },
+   {
+    "code_ligne": "006000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 20.8
+   },
+   {
+    "code_ligne": "006000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 57.0
+   },
+   {
+    "code_ligne": "010000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 19.5
+   },
+   {
+    "code_ligne": "012000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 38.2
+   },
+   {
+    "code_ligne": "015000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 4.7
+   },
+   {
+    "code_ligne": "026000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.7
+   },
+   {
+    "code_ligne": "026000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 5.4
+   },
+   {
+    "code_ligne": "026000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 48.0
+   },
+   {
+    "code_ligne": "027000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 36.5
+   },
+   {
+    "code_ligne": "033000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 16.5
+   },
+   {
+    "code_ligne": "039000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 23.1
+   },
+   {
+    "code_ligne": "039000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.1
+   },
+   {
+    "code_ligne": "039306",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.6
+   },
+   {
+    "code_ligne": "040000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.2
+   },
+   {
+    "code_ligne": "041000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 2.8
+   },
+   {
+    "code_ligne": "051000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 23.1
+   },
+   {
+    "code_ligne": "054000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 7.7
+   },
+   {
+    "code_ligne": "055000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 6.9
+   },
+   {
+    "code_ligne": "057000",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.3
+   },
+   {
+    "code_ligne": "060000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.3
+   },
+   {
+    "code_ligne": "063000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 18.0
+   },
+   {
+    "code_ligne": "064000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 4.2
+   },
+   {
+    "code_ligne": "064000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.6
+   },
+   {
+    "code_ligne": "064000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.1
+   },
+   {
+    "code_ligne": "065000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 34.1
+   },
+   {
+    "code_ligne": "065000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 20.2
+   },
+   {
+    "code_ligne": "078000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.8
+   },
+   {
+    "code_ligne": "078000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.8
+   },
+   {
+    "code_ligne": "081606",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.6
+   },
+   {
+    "code_ligne": "082611",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 5.5
+   },
+   {
+    "code_ligne": "085000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 75.6
+   },
+   {
+    "code_ligne": "086000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 2.3
+   },
+   {
+    "code_ligne": "088000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 121.9
+   },
+   {
+    "code_ligne": "097000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 1.2
+   },
+   {
+    "code_ligne": "097000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.9
+   },
+   {
+    "code_ligne": "099000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.5
+   },
+   {
+    "code_ligne": "099000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.5
+   },
+   {
+    "code_ligne": "100000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 13.3
+   },
+   {
+    "code_ligne": "100000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "111000",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "116000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 10.0
+   },
+   {
+    "code_ligne": "116000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 10.5
+   },
+   {
+    "code_ligne": "119000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.1
+   },
+   {
+    "code_ligne": "121000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 23.4
+   },
+   {
+    "code_ligne": "122000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.4
+   },
+   {
+    "code_ligne": "123000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 14.2
+   },
+   {
+    "code_ligne": "123000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.4
+   },
+   {
+    "code_ligne": "123000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.4
+   },
+   {
+    "code_ligne": "130000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.1
+   },
+   {
+    "code_ligne": "134000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.3
+   },
+   {
+    "code_ligne": "135000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 4.5
+   },
+   {
+    "code_ligne": "136000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 1.2
+   },
+   {
+    "code_ligne": "139301",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.1
+   },
+   {
+    "code_ligne": "139302",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.7
+   },
+   {
+    "code_ligne": "150000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 15.6
+   },
+   {
+    "code_ligne": "159000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 63.4
+   },
+   {
+    "code_ligne": "160000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 14.4
+   },
+   {
+    "code_ligne": "167000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.9
+   },
+   {
+    "code_ligne": "167000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.4
+   },
+   {
+    "code_ligne": "167000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 12.3
+   },
+   {
+    "code_ligne": "168000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 23.6
+   },
+   {
+    "code_ligne": "168000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.4
+   },
+   {
+    "code_ligne": "169306",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.7
+   },
+   {
+    "code_ligne": "170000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 9.6
+   },
+   {
+    "code_ligne": "174000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.0
+   },
+   {
+    "code_ligne": "174000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 4.6
+   },
+   {
+    "code_ligne": "180611",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.7
+   },
+   {
+    "code_ligne": "194000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 4.6
+   },
+   {
+    "code_ligne": "195000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 2.4
+   },
+   {
+    "code_ligne": "203000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 5.1
+   },
+   {
+    "code_ligne": "203000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.4
+   },
+   {
+    "code_ligne": "203000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.1
+   },
+   {
+    "code_ligne": "205000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 5.6
+   },
+   {
+    "code_ligne": "205000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.4
+   },
+   {
+    "code_ligne": "206950",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.6
+   },
+   {
+    "code_ligne": "207000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 33.9
+   },
+   {
+    "code_ligne": "208000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 11.2
+   },
+   {
+    "code_ligne": "210000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 21.3
+   },
+   {
+    "code_ligne": "212000",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.9
+   },
+   {
+    "code_ligne": "214000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 6.4
+   },
+   {
+    "code_ligne": "218000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 20.2
+   },
+   {
+    "code_ligne": "220000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 28.8
+   },
+   {
+    "code_ligne": "223000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.9
+   },
+   {
+    "code_ligne": "227000",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.7
+   },
+   {
+    "code_ligne": "228000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 8.5,
+    "km_ecartee": 1.0
+   },
    {
     "code_ligne": "229000",
     "statut_jeu_ouvert": "S9A3",
-    "km_suspendue": 32.6,
-    "km_non_exploitee": 23.0
+    "km_suspendue": 55.6,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "236000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 24.1,
+    "km_non_exploitee": 13.9
+   },
+   {
+    "code_ligne": "236000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "238000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 7.8
+   },
+   {
+    "code_ligne": "238000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 21.5
+   },
+   {
+    "code_ligne": "240000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.6
+   },
+   {
+    "code_ligne": "241000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 11.6
+   },
+   {
+    "code_ligne": "242626",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 22.5
+   },
+   {
+    "code_ligne": "248000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 22.7
+   },
+   {
+    "code_ligne": "251000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.1
+   },
+   {
+    "code_ligne": "251000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 4.1
+   },
+   {
+    "code_ligne": "253000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 2.8
+   },
+   {
+    "code_ligne": "253000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.6
+   },
+   {
+    "code_ligne": "253000",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 13.8
+   },
+   {
+    "code_ligne": "254610",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.5
+   },
+   {
+    "code_ligne": "256000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.5
+   },
+   {
+    "code_ligne": "257000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 9.5
+   },
+   {
+    "code_ligne": "259000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 6.2
+   },
+   {
+    "code_ligne": "259000",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.5
+   },
+   {
+    "code_ligne": "259000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 17.5
+   },
+   {
+    "code_ligne": "259000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 23.2
+   },
+   {
+    "code_ligne": "268000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 15.6
+   },
+   {
+    "code_ligne": "268000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.1
+   },
+   {
+    "code_ligne": "268000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.4
+   },
+   {
+    "code_ligne": "268000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 18.1
+   },
+   {
+    "code_ligne": "271000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 1.9
+   },
+   {
+    "code_ligne": "272306",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.1
+   },
+   {
+    "code_ligne": "272311",
+    "statut_jeu_ouvert": "NEUT DEF",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.5
+   },
+   {
+    "code_ligne": "272646",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 11.1
+   },
+   {
+    "code_ligne": "286610",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.8
+   },
+   {
+    "code_ligne": "286612",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.4
+   },
+   {
+    "code_ligne": "286614",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.3
+   },
+   {
+    "code_ligne": "290000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 2.0
+   },
+   {
+    "code_ligne": "293000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 4.7
+   },
+   {
+    "code_ligne": "294000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "296000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 14.6
+   },
+   {
+    "code_ligne": "300000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.6
+   },
+   {
+    "code_ligne": "305000",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 33.0
+   },
+   {
+    "code_ligne": "306000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 4.2
+   },
+   {
+    "code_ligne": "309000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 12.9
+   },
+   {
+    "code_ligne": "309000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.2
+   },
+   {
+    "code_ligne": "317000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 14.6
+   },
+   {
+    "code_ligne": "317000",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.3
+   },
+   {
+    "code_ligne": "317000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "317000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.9
+   },
+   {
+    "code_ligne": "319000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 6.7
+   },
+   {
+    "code_ligne": "322000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 12.7
+   },
+   {
+    "code_ligne": "323000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 36.4,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "330000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 41.9
+   },
+   {
+    "code_ligne": "332000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 10.4
+   },
+   {
+    "code_ligne": "333000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 18.9
+   },
+   {
+    "code_ligne": "335301",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.2
+   },
+   {
+    "code_ligne": "340306",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.4
+   },
+   {
+    "code_ligne": "341606",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.3
+   },
+   {
+    "code_ligne": "351000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 28.4
+   },
+   {
+    "code_ligne": "353300",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 6.4
+   },
+   {
+    "code_ligne": "357000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 31.4
+   },
+   {
+    "code_ligne": "357000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 42.4
+   },
+   {
+    "code_ligne": "358000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.8
+   },
+   {
+    "code_ligne": "361000",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 10.7
+   },
+   {
+    "code_ligne": "361000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.3
+   },
+   {
+    "code_ligne": "366536",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.0
    },
    {
     "code_ligne": "370000",
@@ -143,8 +1182,8 @@
    {
     "code_ligne": "370000",
     "statut_jeu_ouvert": "FERME",
-    "km_suspendue": 7.2,
-    "km_non_exploitee": 0.0
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 7.2
    },
    {
     "code_ligne": "370000",
@@ -153,16 +1192,544 @@
     "km_non_exploitee": 0.4
    },
    {
+    "code_ligne": "371000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 9.2
+   },
+   {
+    "code_ligne": "375000",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.7
+   },
+   {
+    "code_ligne": "375000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 33.2
+   },
+   {
+    "code_ligne": "376000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 6.0
+   },
+   {
+    "code_ligne": "377000",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.3
+   },
+   {
+    "code_ligne": "377000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 12.6
+   },
+   {
+    "code_ligne": "379000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.6
+   },
+   {
+    "code_ligne": "397000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.8
+   },
+   {
+    "code_ligne": "397000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 13.3
+   },
+   {
+    "code_ligne": "403300",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.7
+   },
+   {
+    "code_ligne": "409000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 42.2
+   },
+   {
+    "code_ligne": "412000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 33.0
+   },
+   {
+    "code_ligne": "412000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 27.9
+   },
+   {
+    "code_ligne": "414000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 11.9
+   },
+   {
+    "code_ligne": "418000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 26.6
+   },
+   {
+    "code_ligne": "422000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 28.5
+   },
+   {
+    "code_ligne": "422000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 9.8
+   },
+   {
+    "code_ligne": "428000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 9.0
+   },
+   {
+    "code_ligne": "428000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 11.6
+   },
+   {
+    "code_ligne": "431320",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 2.0
+   },
+   {
+    "code_ligne": "432000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 47.2
+   },
+   {
+    "code_ligne": "434000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 13.9
+   },
+   {
+    "code_ligne": "436000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 33.1
+   },
+   {
+    "code_ligne": "436000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 35.0
+   },
+   {
+    "code_ligne": "439000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 28.9
+   },
+   {
+    "code_ligne": "445000",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 4.0
+   },
+   {
+    "code_ligne": "445000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.3
+   },
+   {
+    "code_ligne": "445506",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.1
+   },
+   {
+    "code_ligne": "446000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.0
+   },
+   {
     "code_ligne": "447000",
     "statut_jeu_ouvert": "NEUT",
     "km_suspendue": 25.4,
     "km_non_exploitee": 0.0
    },
    {
+    "code_ligne": "457000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 52.3
+   },
+   {
+    "code_ligne": "457000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 5.6
+   },
+   {
+    "code_ligne": "458000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 2.5
+   },
+   {
+    "code_ligne": "459300",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 2.6
+   },
+   {
+    "code_ligne": "460000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 21.9
+   },
+   {
+    "code_ligne": "460000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 56.8
+   },
+   {
+    "code_ligne": "460000",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 4.4
+   },
+   {
+    "code_ligne": "460000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.4
+   },
+   {
+    "code_ligne": "460000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 10.7
+   },
+   {
+    "code_ligne": "463000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 14.9
+   },
+   {
+    "code_ligne": "472000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 19.6
+   },
+   {
+    "code_ligne": "475000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 61.4
+   },
+   {
+    "code_ligne": "475606",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.4
+   },
+   {
+    "code_ligne": "476000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.4
+   },
+   {
+    "code_ligne": "476000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 6.5
+   },
+   {
+    "code_ligne": "477000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 9.3
+   },
+   {
+    "code_ligne": "486506",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.5
+   },
+   {
+    "code_ligne": "500000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 19.7
+   },
+   {
+    "code_ligne": "500000",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 33.3
+   },
+   {
+    "code_ligne": "500000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 81.7
+   },
+   {
+    "code_ligne": "503300",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.1
+   },
+   {
+    "code_ligne": "508000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 24.3
+   },
+   {
+    "code_ligne": "508000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 18.8
+   },
+   {
+    "code_ligne": "508000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.8
+   },
+   {
+    "code_ligne": "509000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 22.2
+   },
+   {
+    "code_ligne": "510000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.7
+   },
+   {
+    "code_ligne": "510000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 7.5
+   },
+   {
+    "code_ligne": "518000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.9
+   },
+   {
+    "code_ligne": "518000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.0
+   },
+   {
+    "code_ligne": "521000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 3.8
+   },
+   {
+    "code_ligne": "521000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.7
+   },
+   {
+    "code_ligne": "523000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 15.5
+   },
+   {
+    "code_ligne": "523000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 13.1
+   },
+   {
+    "code_ligne": "523000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 29.5
+   },
+   {
+    "code_ligne": "524000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 14.8
+   },
+   {
+    "code_ligne": "525000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 47.3
+   },
+   {
+    "code_ligne": "528000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.9
+   },
+   {
+    "code_ligne": "529000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 19.3
+   },
+   {
+    "code_ligne": "534611",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.8
+   },
+   {
+    "code_ligne": "535000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.0
+   },
+   {
+    "code_ligne": "537000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 27.3
+   },
+   {
+    "code_ligne": "546000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 10.8
+   },
+   {
+    "code_ligne": "547000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 4.3,
+    "km_non_exploitee": 18.8
+   },
+   {
+    "code_ligne": "555000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.0
+   },
+   {
+    "code_ligne": "556606",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 2.1
+   },
+   {
+    "code_ligne": "558000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.0
+   },
+   {
+    "code_ligne": "558000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 29.0
+   },
+   {
+    "code_ligne": "559000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 4.8
+   },
+   {
+    "code_ligne": "570306",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.1
+   },
+   {
+    "code_ligne": "570306",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.4
+   },
+   {
+    "code_ligne": "570506",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 1.2
+   },
+   {
+    "code_ligne": "571000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 3.8
+   },
+   {
+    "code_ligne": "571000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 13.7
+   },
+   {
+    "code_ligne": "571000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "573000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.4
+   },
+   {
+    "code_ligne": "573000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.5
+   },
+   {
+    "code_ligne": "573000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 12.3
+   },
+   {
+    "code_ligne": "574000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 21.9
+   },
+   {
+    "code_ligne": "574000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.1
+   },
+   {
     "code_ligne": "580000",
     "statut_jeu_ouvert": "DEC V",
-    "km_suspendue": 7.4,
-    "km_ecartee": 27.5
+    "km_suspendue": 2.2,
+    "km_ecartee": 32.7
    },
    {
     "code_ligne": "580000",
@@ -171,25 +1738,1483 @@
     "km_non_exploitee": 0.0
    },
    {
+    "code_ligne": "583000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 13.9
+   },
+   {
+    "code_ligne": "591000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.3
+   },
+   {
+    "code_ligne": "591000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.1
+   },
+   {
+    "code_ligne": "591000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.4
+   },
+   {
+    "code_ligne": "594000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 37.4
+   },
+   {
+    "code_ligne": "598000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 38.3
+   },
+   {
+    "code_ligne": "598000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.8
+   },
+   {
+    "code_ligne": "601000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 2.1
+   },
+   {
+    "code_ligne": "604000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 7.3
+   },
+   {
+    "code_ligne": "607000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.6
+   },
+   {
+    "code_ligne": "607000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.5
+   },
+   {
+    "code_ligne": "607000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.7
+   },
+   {
     "code_ligne": "610000",
     "statut_jeu_ouvert": "NEUT",
-    "km_suspendue": 34.3,
-    "km_non_exploitee": 32.0
+    "km_suspendue": 66.3,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "613000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 41.2,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "615000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 20.4
+   },
+   {
+    "code_ligne": "632000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 1.1
+   },
+   {
+    "code_ligne": "632000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 2.5
+   },
+   {
+    "code_ligne": "634000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 9.0
+   },
+   {
+    "code_ligne": "634000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.9
+   },
+   {
+    "code_ligne": "637000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 2.0
+   },
+   {
+    "code_ligne": "640311",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.8
+   },
+   {
+    "code_ligne": "641000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.7
+   },
+   {
+    "code_ligne": "642000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 23.1
+   },
+   {
+    "code_ligne": "642000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.4
+   },
+   {
+    "code_ligne": "642000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 19.1
+   },
+   {
+    "code_ligne": "643000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.2
+   },
+   {
+    "code_ligne": "643000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 33.4
+   },
+   {
+    "code_ligne": "643000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 40.1
+   },
+   {
+    "code_ligne": "643000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 6.1
+   },
+   {
+    "code_ligne": "644000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 14.4
+   },
+   {
+    "code_ligne": "647000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 19.0
+   },
+   {
+    "code_ligne": "647000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 44.4
    },
    {
     "code_ligne": "652000",
     "statut_jeu_ouvert": "FERME MV",
-    "km_suspendue": 26.1,
-    "km_non_exploitee": 30.2
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 56.3
    },
    {
     "code_ligne": "652000",
     "statut_jeu_ouvert": "NEUT",
-    "km_suspendue": 22.6,
-    "km_non_exploitee": 15.2
+    "km_suspendue": 32.9,
+    "km_non_exploitee": 4.9
+   },
+   {
+    "code_ligne": "653000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 12.0
+   },
+   {
+    "code_ligne": "654000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 34.3
+   },
+   {
+    "code_ligne": "654000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 7.2,
+    "km_non_exploitee": 11.0
+   },
+   {
+    "code_ligne": "658000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.3
+   },
+   {
+    "code_ligne": "661000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.6
+   },
+   {
+    "code_ligne": "664000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 32.5
+   },
+   {
+    "code_ligne": "665000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 5.8
+   },
+   {
+    "code_ligne": "666000",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 20.1
+   },
+   {
+    "code_ligne": "667000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 14.7
+   },
+   {
+    "code_ligne": "670000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.7
+   },
+   {
+    "code_ligne": "670000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.1
+   },
+   {
+    "code_ligne": "676000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 7.0,
+    "km_ecartee": 0.2
+   },
+   {
+    "code_ligne": "676000",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 15.5
+   },
+   {
+    "code_ligne": "676000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 27.7,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "680000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.8
+   },
+   {
+    "code_ligne": "680000",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.8
+   },
+   {
+    "code_ligne": "680000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.0
+   },
+   {
+    "code_ligne": "681000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 18.8
+   },
+   {
+    "code_ligne": "682000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 46.3
+   },
+   {
+    "code_ligne": "682000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "683000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 14.9
+   },
+   {
+    "code_ligne": "684000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 6.8
+   },
+   {
+    "code_ligne": "684000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 21.5
+   },
+   {
+    "code_ligne": "684000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 19.5
+   },
+   {
+    "code_ligne": "685000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.6
+   },
+   {
+    "code_ligne": "686000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 1.7
+   },
+   {
+    "code_ligne": "686000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 56.9
+   },
+   {
+    "code_ligne": "687000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "687000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 21.6
+   },
+   {
+    "code_ligne": "689000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.0
+   },
+   {
+    "code_ligne": "689000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 9.7
+   },
+   {
+    "code_ligne": "694000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 10.3
+   },
+   {
+    "code_ligne": "694000",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 15.6
+   },
+   {
+    "code_ligne": "694000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 12.6
+   },
+   {
+    "code_ligne": "695000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 22.3
+   },
+   {
+    "code_ligne": "695000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 27.7
+   },
+   {
+    "code_ligne": "695000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 41.3
+   },
+   {
+    "code_ligne": "695000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 64.6
+   },
+   {
+    "code_ligne": "696000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.1
+   },
+   {
+    "code_ligne": "696000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 33.5
+   },
+   {
+    "code_ligne": "696000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 2.7
+   },
+   {
+    "code_ligne": "698000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 25.6
+   },
+   {
+    "code_ligne": "698000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.1
+   },
+   {
+    "code_ligne": "699000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 5.6
+   },
+   {
+    "code_ligne": "699000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "703000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 19.6
+   },
+   {
+    "code_ligne": "705000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 66.7
+   },
+   {
+    "code_ligne": "709000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 54.4
+   },
+   {
+    "code_ligne": "710000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.0
+   },
+   {
+    "code_ligne": "711000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 21.4
+   },
+   {
+    "code_ligne": "712000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 24.7
+   },
+   {
+    "code_ligne": "712000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 17.6
+   },
+   {
+    "code_ligne": "712000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 35.5
+   },
+   {
+    "code_ligne": "713000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 17.5
+   },
+   {
+    "code_ligne": "721000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 70.5
+   },
+   {
+    "code_ligne": "724000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 67.0
+   },
+   {
+    "code_ligne": "725000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 40.2,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "725000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 2.1,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "728000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 8.3
+   },
+   {
+    "code_ligne": "728000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 5.2
+   },
+   {
+    "code_ligne": "731000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 1.2
+   },
+   {
+    "code_ligne": "731000",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.2
+   },
+   {
+    "code_ligne": "731000",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 4.8
+   },
+   {
+    "code_ligne": "732000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.5
+   },
+   {
+    "code_ligne": "732000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 27.8
+   },
+   {
+    "code_ligne": "732000",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 4.9
+   },
+   {
+    "code_ligne": "732000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 17.2
+   },
+   {
+    "code_ligne": "733000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 4.1
+   },
+   {
+    "code_ligne": "734000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 15.8
+   },
+   {
+    "code_ligne": "736000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 26.7
+   },
+   {
+    "code_ligne": "736000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 29.6
+   },
+   {
+    "code_ligne": "737000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 37.5
+   },
+   {
+    "code_ligne": "742000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.5
+   },
+   {
+    "code_ligne": "742000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 6.8
+   },
+   {
+    "code_ligne": "745000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 22.8
+   },
+   {
+    "code_ligne": "747000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 19.9
+   },
+   {
+    "code_ligne": "747306",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.8
+   },
+   {
+    "code_ligne": "748000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 5.9
+   },
+   {
+    "code_ligne": "748000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 21.0
+   },
+   {
+    "code_ligne": "748000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 29.0
+   },
+   {
+    "code_ligne": "749000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 28.5
+   },
+   {
+    "code_ligne": "749000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 15.1
+   },
+   {
+    "code_ligne": "753000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 17.9
+   },
+   {
+    "code_ligne": "753000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 7.5
+   },
+   {
+    "code_ligne": "754000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 29.0
+   },
+   {
+    "code_ligne": "755000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 79.1
+   },
+   {
+    "code_ligne": "757000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.0
+   },
+   {
+    "code_ligne": "757000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 32.9
+   },
+   {
+    "code_ligne": "761000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.0
+   },
+   {
+    "code_ligne": "761000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 6.6
+   },
+   {
+    "code_ligne": "762000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 42.9
+   },
+   {
+    "code_ligne": "763000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 23.8
+   },
+   {
+    "code_ligne": "764000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.8
+   },
+   {
+    "code_ligne": "769000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 43.8
+   },
+   {
+    "code_ligne": "769000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 6.6
+   },
+   {
+    "code_ligne": "769000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.4
+   },
+   {
+    "code_ligne": "770606",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.3
+   },
+   {
+    "code_ligne": "772000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 6.7
+   },
+   {
+    "code_ligne": "774000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 5.0
+   },
+   {
+    "code_ligne": "775000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 9.2
+   },
+   {
+    "code_ligne": "776000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 10.5
+   },
+   {
+    "code_ligne": "776000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.8
+   },
+   {
+    "code_ligne": "780000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.6
+   },
+   {
+    "code_ligne": "782000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.7
+   },
+   {
+    "code_ligne": "784000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 46.2
+   },
+   {
+    "code_ligne": "785000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 61.3
+   },
+   {
+    "code_ligne": "785000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "785000",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.6
+   },
+   {
+    "code_ligne": "789000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 1.0
+   },
+   {
+    "code_ligne": "789000",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 17.4
+   },
+   {
+    "code_ligne": "789000",
+    "statut_jeu_ouvert": "FERME MV",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.5
+   },
+   {
+    "code_ligne": "790611",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.9
+   },
+   {
+    "code_ligne": "792000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 48.9
+   },
+   {
+    "code_ligne": "792000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.9
+   },
+   {
+    "code_ligne": "795000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 41.1
+   },
+   {
+    "code_ligne": "797000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "805000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 16.2
+   },
+   {
+    "code_ligne": "805000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.2
+   },
+   {
+    "code_ligne": "805000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 18.8,
+    "km_non_exploitee": 0.7
+   },
+   {
+    "code_ligne": "808000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 3.5,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "812000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.0
+   },
+   {
+    "code_ligne": "812000",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 2.9
+   },
+   {
+    "code_ligne": "813000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 20.5
+   },
+   {
+    "code_ligne": "813000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 5.7,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "813000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.6
+   },
+   {
+    "code_ligne": "814000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.7
+   },
+   {
+    "code_ligne": "814000",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "815000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 13.7
+   },
+   {
+    "code_ligne": "820000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 32.9
+   },
+   {
+    "code_ligne": "821000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "832000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 42.8
+   },
+   {
+    "code_ligne": "832000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.7
+   },
+   {
+    "code_ligne": "838000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 144.3
+   },
+   {
+    "code_ligne": "840000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 29.8
+   },
+   {
+    "code_ligne": "845950",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.8
+   },
+   {
+    "code_ligne": "846000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 42.5
+   },
+   {
+    "code_ligne": "847000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 51.7
+   },
+   {
+    "code_ligne": "851000",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 9.8
+   },
+   {
+    "code_ligne": "851000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.1
+   },
+   {
+    "code_ligne": "851000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 4.0
+   },
+   {
+    "code_ligne": "855000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 12.4
+   },
+   {
+    "code_ligne": "856000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.7
+   },
+   {
+    "code_ligne": "856000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.6
+   },
+   {
+    "code_ligne": "857000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 16.4
+   },
+   {
+    "code_ligne": "858000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 4.1
+   },
+   {
+    "code_ligne": "858000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 6.0
+   },
+   {
+    "code_ligne": "859000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 15.3
+   },
+   {
+    "code_ligne": "865000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 2.5,
+    "km_ecartee": 0.0
+   },
+   {
+    "code_ligne": "865000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.6
+   },
+   {
+    "code_ligne": "865000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 3.0,
+    "km_non_exploitee": 6.2
+   },
+   {
+    "code_ligne": "867000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 13.8,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "867612",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.1,
+    "km_non_exploitee": 0.5
+   },
+   {
+    "code_ligne": "867616",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 1.1,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "868000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 1.5
+   },
+   {
+    "code_ligne": "868000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 13.8
+   },
+   {
+    "code_ligne": "869000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 19.5
+   },
+   {
+    "code_ligne": "874000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 2.1
+   },
+   {
+    "code_ligne": "874000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.1
+   },
+   {
+    "code_ligne": "874000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.2
+   },
+   {
+    "code_ligne": "877300",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.2
+   },
+   {
+    "code_ligne": "877301",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.3
+   },
+   {
+    "code_ligne": "878000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 7.6
+   },
+   {
+    "code_ligne": "878000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 22.4
+   },
+   {
+    "code_ligne": "878301",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.0
+   },
+   {
+    "code_ligne": "882000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.5
+   },
+   {
+    "code_ligne": "884000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.1
+   },
+   {
+    "code_ligne": "887000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 17.8
+   },
+   {
+    "code_ligne": "887000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.2
+   },
+   {
+    "code_ligne": "887000",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 2.2
+   },
+   {
+    "code_ligne": "889000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 9.0
+   },
+   {
+    "code_ligne": "891000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 37.2
+   },
+   {
+    "code_ligne": "892000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 21.1
+   },
+   {
+    "code_ligne": "898000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 4.5
+   },
+   {
+    "code_ligne": "900903",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.8
+   },
+   {
+    "code_ligne": "901000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 15.3
+   },
+   {
+    "code_ligne": "903608",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.8
+   },
+   {
+    "code_ligne": "904000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.0
+   },
+   {
+    "code_ligne": "904000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 19.7
+   },
+   {
+    "code_ligne": "907000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 27.2
+   },
+   {
+    "code_ligne": "907000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 20.4
+   },
+   {
+    "code_ligne": "909000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 4.1
+   },
+   {
+    "code_ligne": "920000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 20.9
+   },
+   {
+    "code_ligne": "922000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 1.3
+   },
+   {
+    "code_ligne": "922000",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.8
+   },
+   {
+    "code_ligne": "926000",
+    "statut_jeu_ouvert": "FERME DT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 5.1
+   },
+   {
+    "code_ligne": "928106",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.1
+   },
+   {
+    "code_ligne": "934100",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 2.4
+   },
+   {
+    "code_ligne": "935111",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 2.2
+   },
+   {
+    "code_ligne": "939306",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 0.9
+   },
+   {
+    "code_ligne": "940100",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 2.4
+   },
+   {
+    "code_ligne": "947000",
+    "statut_jeu_ouvert": "NEUT DEF",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 61.5
+   },
+   {
+    "code_ligne": "948000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 16.4
+   },
+   {
+    "code_ligne": "955000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 14.0
+   },
+   {
+    "code_ligne": "955000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.9
+   },
+   {
+    "code_ligne": "956000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 18.1
+   },
+   {
+    "code_ligne": "968300",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.3
+   },
+   {
+    "code_ligne": "968301",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 2.5
+   },
+   {
+    "code_ligne": "971000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.1
+   },
+   {
+    "code_ligne": "971000",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.4
+   },
+   {
+    "code_ligne": "975000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 9.9
+   },
+   {
+    "code_ligne": "980000",
+    "statut_jeu_ouvert": "FERME",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.3
+   },
+   {
+    "code_ligne": "980000",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 1.4
+   },
+   {
+    "code_ligne": "980000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 8.9
+   },
+   {
+    "code_ligne": "980106",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.5
+   },
+   {
+    "code_ligne": "990000",
+    "statut_jeu_ouvert": "DEC V",
+    "km_suspendue": 0.0,
+    "km_ecartee": 3.6
+   },
+   {
+    "code_ligne": "990000",
+    "statut_jeu_ouvert": "FERME ND",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.1
+   },
+   {
+    "code_ligne": "990000",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 3.0
+   },
+   {
+    "code_ligne": "991300",
+    "statut_jeu_ouvert": "FERME D",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 0.7
+   },
+   {
+    "code_ligne": "992300",
+    "statut_jeu_ouvert": "NEUT",
+    "km_suspendue": 0.0,
+    "km_non_exploitee": 2.3
    }
   ]
  },
+ "lignes_etroites_ajoutees": [
+  {
+   "code_ligne": "995000",
+   "dans_le_fichier_de_formes": false,
+   "tracés_dans_le_jeu_ecartement": 1,
+   "gares_a_moins_de_1_km": 40,
+   "ajoutee": true,
+   "km": 152.0
+  },
+  {
+   "code_ligne": "996000",
+   "dans_le_fichier_de_formes": false,
+   "tracés_dans_le_jeu_ecartement": 1,
+   "gares_a_moins_de_1_km": 15,
+   "ajoutee": true,
+   "km": 71.0
+  }
+ ],
  "gares_desservies_min": 2,
  "releve_manuel": {
   "source": "relevé manuel sur la carte SNCF Réseau « Le réseau ferré en France », mars 2026",
@@ -768,15 +3793,16 @@
   "km reclassés par le relevé manuel, autre": 147.6,
   "km reclassés par le relevé manuel, lgv_autre": 325.4,
   "km reclassés par le relevé manuel, suspendue_autre": 77.1,
-  "km suspendue (repères et relevé), statut du jeu ouvert DEC V": 25.6,
-  "km suspendue (repères et relevé), statut du jeu ouvert FERME": 7.2,
-  "km suspendue (repères et relevé), statut du jeu ouvert FERME MV": 26.1,
-  "km suspendue (repères et relevé), statut du jeu ouvert NEUT": 97.1,
-  "km suspendue (repères et relevé), statut du jeu ouvert S9A3": 32.6,
+  "km suspendue (repères et relevé), statut du jeu ouvert DEC V": 38.4,
+  "km suspendue (repères et relevé), statut du jeu ouvert FERME": 73.3,
+  "km suspendue (repères et relevé), statut du jeu ouvert FERME MV": 40.2,
+  "km suspendue (repères et relevé), statut du jeu ouvert NEUT": 255.0,
+  "km suspendue (repères et relevé), statut du jeu ouvert S9A3": 55.6,
   "longueur km, exploitée, catégorie fret": 2322.8,
   "longueur km, exploitée, catégorie lgv": 2320.3,
   "longueur km, exploitée, catégorie lgv_autre": 300.8,
   "longueur km, exploitée, catégorie metrique": 164.4,
+  "longueur km, exploitée, catégorie metrique (ajoutée, jeu LGV et écartement)": 222.9,
   "longueur km, exploitée, catégorie mixte": 22070.4,
   "longueur km, exploitée, non électrifiée": 10416.2,
   "longueur km, exploitée, voies 1": 10229.6,
@@ -785,15 +3811,15 @@
   "longueur km, exploitée, électrifiée": 16762.4,
   "longueur km, statut A": 147.6,
   "longueur km, statut E": 27178.7,
-  "longueur km, statut F": 3356.5,
-  "longueur km, statut N": 188.7,
-  "longueur km, statut P": 1962.4,
+  "longueur km, statut F": 3217.4,
+  "longueur km, statut N": 462.6,
+  "longueur km, statut P": 1840.4,
   "longueur km, statut R": 77.1,
   "segments écartés (statut DEC NV)": 64,
-  "segments écartés (statut DEC V)": 130,
+  "segments écartés (statut DEC V)": 128,
   "segments écartés (statut RETRANCHE)": 28,
   "segments écartés (statut VS)": 132,
-  "traits de lignes écrits": 2926,
+  "traits de lignes écrits": 2933,
   "évitements (EVIT)": 194
  }
 }

@@ -20,7 +20,7 @@ découpé en arêtes, et chaque arête reçoit ses attributs :
 - usage : un tronçon (code_ligne, rg_troncon) exploité qui compte au moins GARES_DESSERVIES_MIN (2) gares voyageurs réellement
   desservies est « mixte », sinon « fret » (APPROXIMATION : aucun jeu ouvert ne donne l'usage des lignes) ; les LGV restent des LGV.
   Une gare est desservie si elle est marquée voyageurs dans la liste des gares ET (fréquentation 2024 > 0 OU présente dans « Gares de voyageurs »).
-Statuts : voir STATUTS et SUSPENDUE_REPERES. Les lignes déclassées, retranchées ou transférées en voie de service sont écartées.
+Statuts : voir STATUTS et SUSPENDUE_ZONES. Les lignes déclassées, retranchées ou transférées en voie de service sont écartées.
 
 Gares. Liste des gares du RFN (voyageurs O/N, fret O/N) dédoublonnée par code UIC ; le niveau d'intérêt vient du segment
 DRG (A national, B régional, C local) du jeu « Gares de voyageurs », à défaut de celui de « Fréquentation en gares ».
@@ -59,24 +59,35 @@ JEUX = {
 
 # Statut (colonne MNEMO) → groupe : E exploitée, F non exploitée (pointillé). Sur la carte SNCF Réseau, les tracés gris sont presque
 # tous en pointillé : les lignes neutralisées (NEUT, NEUT DEF, S9A3) et fermées (FERME*) sont donc « non exploitées » par défaut.
-# Le groupe N (suspendue, longs tirets gris) n'est attribué que par SUSPENDUE_REPERES et par une entrée de RELEVE_MANUEL (cible 'suspendue').
+# Le groupe N (suspendue, longs tirets gris) n'est attribué que par SUSPENDUE_ZONES et par une entrée de RELEVE_MANUEL (cible 'suspendue').
 # Écartés : déclassées (DEC V, DEC NV), retranchée, transférée en voie de service (VS), projet, sauf reclassement. Voir CLAUDE.md.
 STATUTS = {'EXPLOITE': 'E', 'NEUT': 'F', 'NEUT DEF': 'F', 'S9A3': 'F',
            'FERME': 'F', 'FERME ND': 'F', 'FERME D': 'F', 'FERME MV': 'F', 'FERME DT': 'F'}
 GARES_DESSERVIES_MIN = 2  # gares voyageurs desservies pour qu'un tronçon exploité soit « mixte » (sinon fret)
 
-# Lignes suspendues (longs tirets) relevées sur la carte SNCF Réseau (mars 2026) : code de ligne (3 premiers chiffres) → repères
-# (latitude, longitude). Sont « suspendues » les segments NEUT, NEUT DEF, S9A3, FERME* et DEC V de ces lignes, et seulement les arêtes
-# dont le milieu est à moins de SUSPENDUE_RAYON_KM d'un repère (le segment est découpé) ; tout le reste reste « non exploitée ».
-SUSPENDUE_REPERES = {
-    '370': [(49.35, 1.05), (49.18, 1.13)],
-    '229': [(49.80, 3.83)],
-    '610': [(45.79, 0.42)],
-    '580': [(45.15, -0.33)],
-    '652': [(43.82, -0.47), (43.34, 0.05), (43.14, 0.09)],
-    '447': [(48.61, -3.92)],
-}
-SUSPENDUE_RAYON_KM = 15.0
+# Lignes suspendues (longs tirets gris) : 12 zones relevées sur la carte SNCF Réseau (mars 2026), (latitude min, latitude max, longitude min,
+# longitude max, km de traits lus sur le PDF). Sont « suspendues » les segments NEUT, NEUT DEF, S9A3, FERME* et DEC V, ou les parties de segments
+# (découpés), dont l'arête a son milieu dans la zone élargie de SUSPENDUE_MARGE_KM ; tout le reste reste « non exploitée ». Le bilan par zone
+# (km reclassés, rapport aux km lus, codes) est écrit dans rfn_meta.json ; un rapport hors de [0,5 ; 1,8] est signalé.
+SUSPENDUE_ZONES = [
+    (50.04, 50.13, 1.43, 1.84, 34),
+    (49.58, 49.91, 3.64, 4.09, 54),
+    (49.26, 49.41, 0.99, 1.05, 20),
+    (48.54, 48.72, -3.97, -3.86, 25),
+    (46.84, 46.90, 4.90, 5.03, 15),
+    (45.64, 45.89, 0.17, 0.81, 70),
+    (45.25, 45.51, 1.21, 1.39, 41),
+    (45.13, 45.19, -0.40, -0.24, 15),
+    (44.31, 44.39, 2.57, 3.04, 44),
+    (44.13, 44.28, 4.07, 4.18, 30),
+    (43.68, 43.88, -0.50, -0.26, 34),
+    (42.85, 43.04, 2.16, 2.24, 27),
+]
+SUSPENDUE_MARGE_KM = 3.0
+
+# Lignes à voie étroite (métrique) absentes du fichier de formes (Corse) : tracé du jeu « Lignes LGV et par écartement » (catégorie voie étroite),
+# accepté si au moins 2 gares du même code de ligne sont à moins de GARE_MAX_M du tracé. Aucun tracé n'est inventé.
+LIGNES_ETROITES_AJOUTEES = ['995000', '996000']
 
 # Codes de ligne (3 premiers chiffres) dont la carte SNCF Réseau (mars 2026) montre un tracé gris. LISTE INCOMPLÈTE : relevée sur les cartouches
 # du PDF, dont certains sont illisibles ou absents. Les segments inactifs (NEUT*, S9A3, FERME*) dont le code n'y figure pas sont classés
@@ -523,24 +534,48 @@ def rapprocher_releve(formes, gares_brutes):
 
 
 def appliquer_suspendue(formes, reclasses):
-    """SUSPENDUE_REPERES : découpe les segments concernés et marque « suspendue » les arêtes à moins de SUSPENDUE_RAYON_KM d'un repère.
-    Renvoie (formes, reclasses, rapport par ligne et statut du jeu ouvert)."""
-    nouvelles, nouveaux_reclasses, rapport = [], {}, defaultdict(lambda: [0.0, 0.0])
+    """SUSPENDUE_ZONES : découpe les segments inactifs et marque « suspendue » les arêtes dont le milieu est dans une zone (marge comprise).
+    Renvoie (formes, reclasses, rapport par ligne et statut du jeu ouvert, rapport par zone)."""
+    dl, dg = SUSPENDUE_MARGE_KM / 111.19, SUSPENDUE_MARGE_KM / 76.63
+
+    def zone_de(point):
+        for k, (la0, la1, lo0, lo1, _) in enumerate(SUSPENDUE_ZONES):
+            if la0 - dl <= point[1] <= la1 + dl and lo0 - dg <= point[0] <= lo1 + dg:
+                return k
+        return None
+
+    nouvelles, nouveaux_reclasses = [], {}
+    rapport = defaultdict(lambda: [0.0, 0.0])
+    zones = [{'km': 0.0, 'codes': defaultdict(float)} for _ in SUSPENDUE_ZONES]
     for i, f in enumerate(formes):
         p, coords = f['properties'], f['geometry']['coordinates']
-        repères = SUSPENDUE_REPERES.get(p['code_ligne'][:3])
         eligible = p['mnemo'] in ('NEUT', 'NEUT DEF', 'S9A3', 'DEC V') or p['mnemo'].startswith('FERME')
-        if repères is None or not eligible or i in reclasses or len(coords) < 2:
+        if not eligible or i in reclasses or len(coords) < 2:
             nouvelles.append(f)
             if i in reclasses:
                 nouveaux_reclasses[len(nouvelles) - 1] = reclasses[i]
             continue
-        for morceau, dedans in decouper_zone(coords, [(lon, lat) for lat, lon in repères], SUSPENDUE_RAYON_KM):
+        morceaux = []  # [coordonnées, zone ou None] consécutifs
+        for a, b in zip(coords, coords[1:]):
+            k = zone_de(((a[0] + b[0]) / 2, (a[1] + b[1]) / 2))
+            if morceaux and morceaux[-1][1] == k:
+                morceaux[-1][0].append(b)
+            else:
+                morceaux.append([[a, b], k])
+        for morceau, k in morceaux:
             nouvelles.append({'type': 'Feature', 'geometry': {'type': 'LineString', 'coordinates': morceau}, 'properties': p})
-            rapport[(p['code_ligne'], p['mnemo'])][0 if dedans else 1] += km_polyligne(morceau)
-            if dedans:
+            lg = km_polyligne(morceau)
+            rapport[(p['code_ligne'], p['mnemo'])][0 if k is not None else 1] += lg
+            if k is not None:
                 nouveaux_reclasses[len(nouvelles) - 1] = 'suspendue'
-    return nouvelles, nouveaux_reclasses, rapport
+                zones[k]['km'] += lg
+                zones[k]['codes'][p['code_ligne'] + ' ' + p['mnemo']] += lg
+    rapport_zones = []
+    for (la0, la1, lo0, lo1, indique), z in zip(SUSPENDUE_ZONES, zones):
+        rapport_zones.append({'zone': [la0, la1, lo0, lo1], 'km_lus_sur_le_pdf': indique, 'km_reclasses': round(z['km'], 1),
+                              'rapport': round(z['km'] / indique, 2), 'hors_de_0_5_a_1_8': not 0.5 <= z['km'] / indique <= 1.8,
+                              'segments': {k: round(v, 1) for k, v in sorted(z['codes'].items())}})
+    return nouvelles, nouveaux_reclasses, rapport, rapport_zones
 
 
 def gares_desservies(brut):
@@ -564,7 +599,7 @@ def statut_ouvert(mnemo):
     return 'E' if mnemo == 'EXPLOITE' else 'N' if mnemo in ('NEUT', 'NEUT DEF', 'S9A3') else 'F' if mnemo.startswith('FERME') else 'D'
 
 
-def construire_lignes(brut, bilan, bilan_releve, bilan_releve_suspendue):
+def construire_lignes(brut, bilan, bilan_releve, bilan_releve_suspendue, bilan_zones, bilan_etroites):
     formes = charger(brut, 'formes-des-lignes-du-rfn')
     electrifie = sommets_par_ligne(charger(brut, 'liste-des-lignes-electrifiees'), 'elect')
     categorie = sommets_par_ligne(charger(brut, 'lignes-lgv-et-par-ecartement'), 'catlig')
@@ -588,7 +623,8 @@ def construire_lignes(brut, bilan, bilan_releve, bilan_releve_suspendue):
 
     formes, reclasses, rapport = rapprocher_releve(formes, charger(brut, 'liste-des-gares'))
     bilan_releve.extend(rapport)
-    formes, reclasses, rapport_suspendue = appliquer_suspendue(formes, reclasses)
+    formes, reclasses, rapport_suspendue, rapport_zones = appliquer_suspendue(formes, reclasses)
+    bilan_zones.extend(rapport_zones)
     for (code, mnemo), (dedans, dehors) in sorted(rapport_suspendue.items()):
         bilan_releve_suspendue.append({'code_ligne': code, 'statut_jeu_ouvert': mnemo, 'km_suspendue': round(dedans, 1),
                                         ('km_ecartee' if mnemo == 'DEC V' else 'km_non_exploitee'): round(dehors, 1)})
@@ -690,6 +726,23 @@ def construire_lignes(brut, bilan, bilan_releve, bilan_releve_suspendue):
     bilan_releve.append({'entree': ajout['nom'], 'cible': 'lgv_autre', 'code_releve': ajout['code'],
                          'reclasses': [{'code_ligne': ajout['code'], 'statut_jeu_ouvert': 'absent du fichier de formes (jeu LGV)',
                                         'km': round(km_ajoutes, 1), 'gares': sorted(proches)}] if km_ajoutes else [], 'non_retenus': []})
+    # Lignes à voie étroite absentes du fichier de formes (Corse) : tracé du jeu « Lignes LGV et par écartement ».
+    codes_formes = {f['properties']['code_ligne'] for f in formes}
+    for code in LIGNES_ETROITES_AJOUTEES:
+        morceaux = [f for f in charger(brut, 'lignes-lgv-et-par-ecartement')
+                    if f['properties']['code_ligne'] == code and f['properties']['catlig'] == CATEGORIE_ETROITE and f['geometry']]
+        morceaux = list({json.dumps(m['geometry']['coordinates']): m for m in morceaux}.values())  # le jeu répète les tracés
+        gares_code = [g['geometry']['coordinates'] for g in gares_brutes if g['properties']['code_ligne'] == code and g['geometry']]
+        proches = sum(1 for pos in gares_code if any(distance_polyligne_m(pos, m['geometry']['coordinates']) <= GARE_MAX_M for m in morceaux))
+        ajoutee = code not in codes_formes and proches >= 2
+        km_code = sum(km_polyligne(m['geometry']['coordinates']) for m in morceaux) if ajoutee else 0.0
+        if ajoutee:
+            for m in morceaux:
+                traits.append({'type': 'Feature', 'geometry': {'type': 'LineString', 'coordinates': geometrie_simplifiee(m['geometry']['coordinates'])},
+                               'properties': {'g': 'E', 'c': 'metrique', 'v': 1, 'e': 0, 'l': code}})
+            bilan['longueur km, exploitée, catégorie metrique (ajoutée, jeu LGV et écartement)'] += km_code
+        bilan_etroites.append({'code_ligne': code, 'dans_le_fichier_de_formes': code in codes_formes, 'tracés_dans_le_jeu_ecartement': len(morceaux),
+                               'gares_a_moins_de_1_km': proches, 'ajoutee': ajoutee, 'km': round(km_code, 1)})
     # Évitements : voies nommées EVIT du jeu des voies (lignes exploitées uniquement).
     for f in evitements:
         for ligne in (f['geometry']['coordinates'] if f['geometry']['type'] == 'MultiLineString' else [f['geometry']['coordinates']]):
@@ -717,7 +770,8 @@ def main():
     gares = construire_gares(args.brut, bilan)
     rapport_releve = []
     rapport_suspendue = []
-    traits = construire_lignes(args.brut, bilan, rapport_releve, rapport_suspendue)
+    rapport_zones, rapport_etroites = [], []
+    traits = construire_lignes(args.brut, bilan, rapport_releve, rapport_suspendue, rapport_zones, rapport_etroites)
     ecrire_geojson(SORTIE / 'rfn_lignes.geojson', traits)
     ecrire_geojson(SORTIE / 'rfn_gares.geojson', gares)
     sortie = {
@@ -726,7 +780,8 @@ def main():
         'parametres': {'tolerance_voie_m': TOLERANCE_VOIE_M, 'longueur_min_voies_m': LONGUEUR_MIN_VOIES_M,
                        'simplification_m': SIMPLIFICATION_M, 'decimales': DECIMALES},
         'statuts': STATUTS,
-        'suspendue_par_reperes': {'rayon_km': SUSPENDUE_RAYON_KM, 'reperes': {k: v for k, v in SUSPENDUE_REPERES.items()}, 'segments': rapport_suspendue},
+        'suspendue_par_zones': {'marge_km': SUSPENDUE_MARGE_KM, 'zones': rapport_zones, 'segments': rapport_suspendue},
+        'lignes_etroites_ajoutees': rapport_etroites,
         'gares_desservies_min': GARES_DESSERVIES_MIN,
         'releve_manuel': {'source': SOURCE_RELEVE, 'gare_max_m': GARE_MAX_M, 'entrees': rapport_releve},
         'bilan': {k: round(v, 1) if isinstance(v, float) else v for k, v in sorted(bilan.items())},
