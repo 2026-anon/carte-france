@@ -84,7 +84,7 @@ Il n'y a pas encore de tests ni de linter.
   Licence ouverte Etalab : conserver la mention de la source (attribution de la source dans `src/departements.js`).
 - `data/nitrates_stations.csv` : nitrates dans les eaux souterraines, API Hub'Eau « Qualité des nappes d'eau souterraine »
   (`/v1/qualite_nappes/analyses`, paramètre 1340), données ADES, Licence ouverte Etalab 2.0 (attribution dans `src/nitrates.js`).
-  Une ligne par station : la dernière analyse parmi celles des 5 dernières années. Colonnes : `code_station` (texte, `bss_id`),
+  Une ligne par station (22 519) : la dernière analyse parmi celles des 5 dernières années, selon la « Règle commune de sélection » ci-dessous. Colonnes : `code_station` (texte, `bss_id`),
   `nom` (ancien code BSS : l'API ne fournit pas de nom de station), `lat`, `lon` (WGS84, 4 décimales), `commune`,
   `code_dept` (texte), `date_analyse` (AAAA-MM-JJ), `valeur`, `unite` (telle que renvoyée : `mg(NO3)/L`).
 - `data/nitrates_cours_eau.csv` : nitrates dans les eaux de surface (cours d'eau et plans d'eau), API Hub'Eau « Qualité des cours d'eau » v2
@@ -95,12 +95,43 @@ Il n'y a pas encore de tests ni de linter.
   Documentation seulement : le code ne le lit pas encore, les réglages des couches sont dans `COUCHES` (`src/nitrates.js`), dont l'`id`
   est celui du catalogue. La colonne `palette` renvoie à `CLASSES` : ne pas y recopier les couleurs.
 
+### Règle commune de sélection (eaux souterraines et eaux de surface)
+
+Les deux scripts (`scripts/fetch_nitrates.py`, `scripts/fetch_nitrates_cours_eau.py`) appliquent la même règle, avec la même constante
+`QUALIFICATIONS_IGNOREES = {'2', '3'}`. Si on la change, on change les deux scripts et cette section.
+
+- **Qualification** : les analyses « Incorrecte » (`code_qualification` `2`) et « Incertaine » (`3`) sont ignorées **avant** de choisir la dernière analyse
+  de chaque station : on retombe sur la précédente analyse valable. « Correcte » (`1`), « Non qualifié » (`4`) et le code `0` (« non définissable ») sont gardées.
+  Une station dont toutes les analyses seraient ignorées disparaît ; les scripts la comptent (aucune à ce jour).
+- **Dernière analyse** : la plus récente. Départage à horodatage identique : eaux de surface, le `code_analyse` le plus grand (voir plus bas) ;
+  eaux souterraines, la **valeur la plus élevée** puis l'unité par ordre alphabétique. **Ce critère est arbitraire** : rien, sur le fond, ne désigne une fraction
+  ou une valeur plutôt qu'une autre, et l'API des nappes ne fournit aucun identifiant d'analyse pour ordonner. Il est **déterministe** (ordre total : deux exécutions
+  donnent le même CSV, quel que soit l'ordre des lignes renvoyées par l'API) et il **ne départage que des analyses de même station et de même horodatage exact**
+  (fractions différentes) : une analyse plus tardive l'emporte toujours, même le même jour. Avant, le script des nappes gardait la première ligne reçue.
+  Mesuré sur les nappes : 16 stations ont plusieurs analyses au même horodatage que la dernière, dont 11 avec des valeurs différentes ; le passage de « première reçue »
+  à « plus haute valeur » a changé 8 valeurs (écart maximal 0,4, aucune classe).
+- **Valeur ou coordonnées absentes** : si la dernière analyse retenue n'a pas de valeur, ou si la station n'a pas de coordonnées, la station est ignorée, sans retomber
+  sur une analyse plus ancienne.
+- **Effet mesuré de la qualification, eaux souterraines** (117 161 analyses, 22 525 stations) : 115 734 Correcte, 1 231 Non qualifié, 175 Incertaine, 17 Incorrecte, 4 de code 0.
+  192 analyses ignorées ; 0 station disparaît ; 1 station apparaît (BSS001HYWB : sa dernière analyse, Incertaine et sans valeur, est écartée, d'où 30,2 du 2022-04-27) ;
+  6 changent de valeur et de date, 3 de classe (BSS002KLGD 130 → 12, BSS001XNNG 1,5 → 42, BSS002GTTT 3,53 → 21) ; les 3 autres changent de valeur sans changer de classe.
+  Effet sur les eaux de surface : voir leur section.
+
 ### Mettre à jour les nitrates
 
-`python3 scripts/fetch_nitrates.py` (Python 3 standard, aucune dépendance ; environ 25 minutes : une requête par département,
-l'API est lente). Il réécrit `data/nitrates_stations.csv` et affiche le nombre de stations, celles ignorées et les unités.
+`python3 scripts/fetch_nitrates.py [--departements 11 21 26] [--sortie fichier.csv]` (Python 3 standard, aucune dépendance ; environ 25 minutes pour toute la France :
+une requête par département, l'API est lente). Il réécrit `data/nitrates_stations.csv` et affiche un bilan : analyses lues, qualifications, analyses ignorées,
+égalités d'horodatage, stations écrites et ignorées, unités. Il demande `code_qualification` à l'API (champs réels vérifiés : `code_qualification`, `nom_qualification`).
 Limites de l'API respectées : page de 5000 au plus (max 20000) et profondeur `page × taille` ≤ 20000, d'où le découpage par
-département (et par période au-delà de 20000 analyses). La fenêtre est `aujourd'hui − 5 ans`.
+département (et par période au-delà de 20000 analyses). Aucun département n'approche encore la limite d'une page, sauf l'Yonne (`89`, 4 729 analyses sur 5 000).
+
+- **Fenêtre** : le script utilise `aujourd'hui − 5 ans`, donc elle **glisse d'un jour par jour**. Le CSV actuel a été généré avec une fenêtre **figée**, du 2021-10-14
+  au 2026-10-14 (analyses téléchargées le 2026-10-14, puis traitées avec les fonctions du script). Au prochain rafraîchissement, **BSS001WNXF et BSS001XRAL sortiront** : leur analyse
+  unique date du 2021-10-14. Il en ira de même pour toute station dont la dernière analyse sort de la fenêtre.
+- **Test** : `python3 scripts/fetch_nitrates.py --departements 11 21 26 --sortie /tmp/test.csv` redonne exactement les lignes du CSV pour ces départements
+  (1 078 sur 1 078), à ces deux stations près.
+- Pas d'identifiant d'analyse dans cette API : 47 lignes sont identiques sur tous les champs demandés (toutes dans la même page), sans effet sur la valeur retenue.
+  Une unité absente (`symbole_unite` nul, 10 analyses) n'a jamais concerné une station écrite.
 
 ### Mettre à jour les nitrates des eaux de surface
 
@@ -121,10 +152,9 @@ Il réécrit `data/nitrates_cours_eau.csv` et affiche en fin d'exécution un bil
   on garde la plus grande clé `code_analyse`, les codes numériques se comparant comme des nombres, les autres (alphanumériques) comme du texte,
   numériques d'abord. Le script compte les égalités dont les valeurs diffèrent.
 - Seul le support « Eau » (`code_support` = `3`) est retenu ; les autres sont comptés et ignorés.
-- **Qualification** : les analyses « Incorrecte » (`code_qualification` 2) et « Incertaine » (3) sont ignorées **avant** de choisir la dernière analyse
-  de chaque station ; « Correcte » (1) et « Non qualifié » (4) sont gardées. Sur 261 948 analyses uniques : 257 242 Correcte, 4 297 Non qualifié,
-  408 Incertaine, 0 Incorrecte, 1 de code 0. Effet mesuré : 0 station ne disparaît, 1 apparaît (sa dernière analyse, sans valeur et Incertaine, est écartée),
-  58 changent de valeur, 57 de date, 25 de classe. Contrairement à cette couche, `scripts/fetch_nitrates.py` (eaux souterraines) ne lit pas la qualification.
+- **Qualification** : règle commune (voir « Règle commune de sélection »). Effet mesuré sur cette couche : sur 261 948 analyses uniques, 257 242 Correcte,
+  4 297 Non qualifié, 408 Incertaine, 0 Incorrecte, 1 de code 0 ; 0 station ne disparaît, 1 apparaît (sa dernière analyse, sans valeur et Incertaine, est écartée),
+  58 changent de valeur, 57 de date, 25 de classe.
 - **Unité** : l'unité attendue pour 1340 est `mg(NO3)/L`. Les analyses en `mg/L` sont **lues comme du `mg(NO3)/L`** (1 779 stations) et la colonne `unite`
   est écrite `mg(NO3)/L`. Justification chiffrée (comparée le 2026-10-14) : 961 stations ont les deux unités ; sur 736 paires à 30 jours ou moins
   (156 stations, 23 départements, dont 141 paires dans le 64 et 22 dans le 40) le rapport `mg/L` ÷ `mg(NO3)/L` a pour médiane 1,00 (quartiles 0,86 à 1,21),
@@ -132,7 +162,6 @@ Il réécrit `data/nitrates_cours_eau.csv` et affiche en fin d'exécution un bil
   dans les deux sens (339 de `mg(NO3)/L` vers `mg/L`, 529 l'inverse). **Limite : le 65, le 09 et le 72 n'ont aucune paire de comparaison** : pour eux,
   c'est une déduction, pas une vérification. Les autres unités (`mg(CO3)/L`, `mg(N)/L`) ne sont **pas converties** : leur station n'est pas écrite et
   le script la compte.
-- Comme pour les eaux souterraines, une station dont la dernière analyse n'a pas de valeur ou de coordonnées est ignorée, sans retomber sur une plus ancienne.
 - **Valeurs extrêmes examinées et conservées** : les 7 stations au-dessus de 100 mg(NO3)/L ont été passées en revue (série complète, statut, qualification),
   aucune n'est retirée. Thiéloup à Mesnil-Saint-Père (140, contre 2,5 à 19 avant), Canal du Midi à Villepinte (102, médiane 1,7) et Ségrassiés à
   Pampelonne (193, une seule autre analyse à 46) restent douteuses mais non prouvées fausses. Préfontaines (118), Plauzat (110), Toucy (110, pic d'automne
@@ -158,7 +187,7 @@ Il réécrit `data/nitrates_cours_eau.csv` et affiche en fin d'exécution un bil
   pour les eaux de surface (0,2 puis 1,1 px ; plus épais à bas zoom, il noyait les couleurs). La légende affiche ces deux symboles, lus dans la configuration.
 - La couleur est `['to-color', ['at', ['get', 'classe'], ['literal', couleurs]]]` : sans `to-color`, MapLibre refuse l'expression
   (« Expected array<color> but found array<string> ») et la couche ne s'affiche pas.
-- Une station dont la dernière analyse n'a pas de valeur ou de coordonnées est ignorée (on ne retombe pas sur une analyse plus ancienne).
+- Sélection de la dernière analyse (qualification, départage, valeur absente) : une seule règle pour les deux couches, voir « Règle commune de sélection ».
 - Ne jamais mélanger deux unités sans conversion explicite : le script affiche les unités rencontrées, une seule (`mg(NO3)/L`) à ce jour.
 - Clic ou toucher sur un point d'une couche visible : une seule fenêtre pour toutes les couches (`.fenetre-station`), avec en tête le type de la couche
   (`libelleFenetre`), puis nom, commune, valeur, date et code. Le clic sur un point prime sur celui du département (`src/departements.js` l'ignore et ferme sa
