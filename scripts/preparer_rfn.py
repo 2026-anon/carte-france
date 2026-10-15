@@ -77,6 +77,15 @@ SUSPENDUE_REPERES = {
     '447': [(48.61, -3.92)],
 }
 SUSPENDUE_RAYON_KM = 15.0
+
+# Codes de ligne (3 premiers chiffres) dont la carte SNCF Réseau (mars 2026) montre un tracé gris. LISTE INCOMPLÈTE : relevée sur les cartouches
+# du PDF, dont certains sont illisibles ou absents. Les segments inactifs (NEUT*, S9A3, FERME*) dont le code n'y figure pas sont classés
+# « P » (non exploitée, probablement absente de la carte SNCF) : même pointillé, case de filtre propre, cochée par défaut. Certaines de ces
+# lignes figurent peut-être sur la carte SNCF.
+CODES_GRIS_SNCF = set('''002 003 006 010 012 015 026 027 030 033 035 040 054 062 085 088 097 116 121 150 159 160 167 168 169 205 207 208 218 229 241
+259 268 294 296 305 306 319 323 330 357 361 370 371 375 376 377 397 409 412 422 447 457 460 466 472 475 476 500 508 523 525 529 546 547 553 558 559
+574 580 591 594 610 642 643 644 647 652 667 668 681 684 685 689 696 703 711 721 725 732 734 736 742 745 747 748 753 754 755 757 763 784 808 813 820
+838 840 846 847 851 859 867 878 907 920 928 947 955 980 990 992'''.split())
 CATEGORIE_LGV = 'Ligne à grande vitesse'
 CATEGORIE_ETROITE = 'Ligne du réseau conventionnel à voie étroite'
 INTERET = {'A': 'N', 'B': 'R', 'C': 'L'}  # segment DRG → national, régional, local
@@ -589,6 +598,8 @@ def construire_lignes(brut, bilan, bilan_releve, bilan_releve_suspendue):
         p = f['properties']
         cible = reclasses.get(indice)
         statut = {'suspendue_autre': 'R', 'autre': 'A', 'suspendue': 'N'}.get(cible) or STATUTS.get(p['mnemo'])
+        if statut == 'F' and not cible and p['code_ligne'][:3] not in CODES_GRIS_SNCF:
+            statut = 'P'  # non exploitée, code absent de la liste relevée sur la carte SNCF
         if cible == 'suspendue':
             bilan['km suspendue (repères et relevé), statut du jeu ouvert ' + p['mnemo']] += km_polyligne(f['geometry']['coordinates'])
         elif cible:

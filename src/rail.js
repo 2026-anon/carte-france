@@ -66,6 +66,12 @@ const LIGNES = [
     paint: { 'line-color': COULEURS.fermee, 'line-width': largeur(0.5, 0.8, 1.2, 1.8), 'line-dasharray': [1, 2] },
   },
   {
+    id: 'rfn_lignes_absentes', // non exploitée, code absent de la carte SNCF relevée : même pointillé que la non exploitée
+    filtre: ['==', ['get', 'g'], 'P'],
+    layout: { 'line-cap': 'butt' },
+    paint: { 'line-color': COULEURS.fermee, 'line-width': largeur(0.5, 0.8, 1.2, 1.8), 'line-dasharray': [1, 2] },
+  },
+  {
     id: 'rfn_lignes_suspendues', // ligne suspendue : longs tirets
     filtre: ['==', ['get', 'g'], 'N'],
     layout: { 'line-cap': 'butt' },
@@ -263,6 +269,7 @@ function remplirLegende(meta) {
     ligneLegende([1, 2, 3].map((voies) => symboleLigne({ couleur: COULEURS.fret, voies })), 'Ligne fret'),
     ligneLegende([symboleLigne({ couleur: COULEURS.metrique })], 'Voie métrique (autre réseau ou touristique)'),
     ligneLegende([symboleLigne({ couleur: COULEURS.fermee, tirets: '1.5 3' })], 'Ligne non exploitée'),
+    ligneLegende([symboleLigne({ couleur: COULEURS.fermee, tirets: '1.5 3' })], 'Non exploitée, probablement absente de la carte SNCF'),
     ligneLegende([symboleLigne({ couleur: COULEURS.suspendue, tirets: '7 3' })], 'Ligne suspendue, reprise programmée ou possible'),
     ligneLegende([symboleLigne({ couleur: COULEURS.suspendueAutre, tirets: '11 4' })], 'Ligne suspendue, reprise programmée par un autre gestionnaire'),
     ligneLegende([symboleLigne({ couleur: COULEURS.autre, electrifie: true })], 'Autre réseau ou exploitation touristique'),
@@ -285,15 +292,16 @@ function remplirLegende(meta) {
     `Source : SNCF Réseau et SNCF Gares & Connexions (ODbL), données de ${mois(dates[0])} à ${mois(dates[dates.length - 1])} selon le jeu. `
     + 'LGV d’un autre gestionnaire, lignes suspendues reprises par un autre gestionnaire, autre réseau et exploitation touristique : '
     + 'aucun jeu ouvert ne les décrit, seuls les tronçons relevés à la main sur la carte SNCF Réseau (mars 2026) sont dessinés, '
-    + 'après vérification du code de ligne et des gares ; les autres restent classés selon le statut des données ouvertes.');
+    + 'après vérification du code de ligne et des gares ; les autres restent classés selon le statut des données ouvertes. '
+    + '« Probablement absente de la carte SNCF » : lignes inactives dont le code n’a pas été relevé sur la carte ; la liste relevée est incomplète, certaines y figurent peut-être.');
   const bloc = document.getElementById('legende-rail');
   bloc.replaceChildren(titre, creer('p', 'legende-sous-titre', 'Lignes'), lignes, explication, creer('p', 'legende-sous-titre', 'Gares'), gares, note);
   bloc.open = !window.matchMedia(PETIT_ECRAN).matches;
 }
 
 // Valeurs des cases de catégorie : `c` des lignes exploitées, plus 'inactif' (g N ou F), 'suspendue_autre' (g R) et 'autre' (g A).
-const TOUTES_CATEGORIES = ['lgv', 'lgv_autre', 'mixte', 'fret', 'metrique', 'inactif', 'suspendue_autre', 'autre'];
-const GROUPE_DE_CATEGORIE = { inactif: ['N', 'F'], suspendue_autre: ['R'], autre: ['A'] };
+const TOUTES_CATEGORIES = ['lgv', 'lgv_autre', 'mixte', 'fret', 'metrique', 'inactif', 'absente', 'suspendue_autre', 'autre'];
+const GROUPE_DE_CATEGORIE = { inactif: ['N', 'F'], absente: ['P'], suspendue_autre: ['R'], autre: ['A'] };
 
 const MARGE_TOUCHER = 10;
 const MARGE_SOURIS = 4;
@@ -356,8 +364,9 @@ function activerInteraction(carte) {
         ligne2.textContent = p.c === 'lgv' || p.c === 'lgv_autre' || p.c === 'evit' ? '' : `${voies}, ${p.e ? 'électrifiée' : 'non électrifiée'}`;
       } else {
         ligne1.textContent = { N: 'Ligne suspendue, reprise programmée ou possible', R: 'Ligne suspendue, reprise programmée par un autre gestionnaire',
-          A: 'Autre réseau ou exploitation touristique' }[g] || 'Ligne non exploitée';
-        ligne2.textContent = g === 'N' || g === 'R' || g === 'A' ? 'Relevé manuel, carte SNCF, mars 2026' : '';
+          A: 'Autre réseau ou exploitation touristique', P: 'Ligne non exploitée' }[g] || 'Ligne non exploitée';
+        ligne2.textContent = g === 'N' || g === 'R' || g === 'A' ? 'Relevé manuel, carte SNCF, mars 2026'
+          : g === 'P' ? 'Probablement absente de la carte SNCF' : '';
       }
       // Quand le classement vient d'un relevé manuel ou d'une neutralisation, on rappelle le statut des données ouvertes (ex. Luchon : « exploitée »).
       ligne3.textContent = p.o ? `Données ouvertes : ${TEXTE_STATUT_OUVERT[p.o]}` : '';
@@ -463,7 +472,7 @@ export function ajouterRail(carte) {
         const garde = p.g === 'E'
           ? (p.c === 'evit' ? etat.categories.has('mixte') : etat.categories.has(p.c)) && etat.electrifie.has(p.e) && etat.voies.has(p.v)
           : GROUPE_DE_CATEGORIE.inactif.includes(p.g) ? etat.categories.has('inactif')
-            : etat.categories.has(p.g === 'R' ? 'suspendue_autre' : 'autre');
+            : etat.categories.has({ P: 'absente', R: 'suspendue_autre' }[p.g] || 'autre');
         if (garde) affiches += f.km;
       }
       compteurLignes.textContent = `Lignes : ≈ ${arrondi(affiches)} km affichés sur ≈ ${arrondi(total)} km`;
@@ -492,6 +501,7 @@ export function ajouterRail(carte) {
           { valeur: 'fret', libelle: 'Fret', symbole: symboleLigne({ couleur: COULEURS.fret, court: true }) },
           { valeur: 'metrique', libelle: 'Voie métrique', symbole: symboleLigne({ couleur: COULEURS.metrique, court: true }) },
           { valeur: 'inactif', libelle: 'Non exploitée ou suspendue', symbole: symboleLigne({ couleur: COULEURS.suspendue, tirets: '4 2', court: true }) },
+          { valeur: 'absente', libelle: 'Non exploitée, probablement absente de la carte SNCF', symbole: symboleLigne({ couleur: COULEURS.fermee, tirets: '1.5 3', court: true }) },
           { valeur: 'suspendue_autre', libelle: 'Suspendue, autre gestionnaire', symbole: symboleLigne({ couleur: COULEURS.suspendueAutre, tirets: '6 2', court: true }) },
           { valeur: 'autre', libelle: 'Autre réseau ou touristique', symbole: symboleLigne({ couleur: COULEURS.autre, court: true }) },
         ], etat.categories),
